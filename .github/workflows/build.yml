@@ -1,0 +1,84 @@
+# SimpleCom CI: Build client mod and server plugin
+# 客户端模组需 JDK 8，在 1.16.5forge-fabric 目录构建
+
+name: Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-bukkitserver:
+    name: Build Bukkit Plugin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Bukkit plugin
+        run: ./gradlew :bukkitserver:build
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bukkitserver
+          path: bukkitserver/build/libs/*.jar
+
+  build-client-mod:
+    name: Build Client Mod (Forge + Fabric)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: 1.16.5forge-fabric
+
+      - name: Build client mod
+        working-directory: 1.16.5forge-fabric
+        run: ./gradlew build
+
+      - name: Build merged JAR
+        working-directory: 1.16.5forge-fabric
+        run: ./gradlew mergeJars
+
+      - name: Upload Forge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-forge
+          path: 1.16.5forge-fabric/forge/build/libs/simplecom-forge-*.jar
+
+      - name: Upload Fabric artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-fabric
+          path: 1.16.5forge-fabric/fabric/build/libs/simplecom-fabric-*.jar
+
+      - name: Upload merged artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-merged
+          path: 1.16.5forge-fabric/build/libs/simplecom-*-merged.jar

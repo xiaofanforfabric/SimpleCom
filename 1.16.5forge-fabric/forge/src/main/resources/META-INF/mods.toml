@@ -1,15 +1,16 @@
 modLoader = "javafml"
 loaderVersion = "[36,)"
 #issueTrackerURL = ""
-license = "Insert License Here"
+license = "LGPL-3.0"
 
 [[mods]]
 modId = "simplecom"
 version = "${version}"
 displayName = "SimpleCom"
-authors = "Me!"
+authors = "xiaofan"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+SimpleCom (简单的通讯器) - Push-to-talk voice chat using Minecraft payload channels.
+Solves UDP NAT issues by piggybacking on the existing game connection. Hold V to record, C to switch channels.
 '''
 #logoFile = ""
 
