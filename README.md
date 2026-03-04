@@ -154,4 +154,4 @@ SimpleCom/
 
 ## License / 许可证
 
-Insert License Here
+GNU LESSER GENERAL PUBLIC LICENSE
