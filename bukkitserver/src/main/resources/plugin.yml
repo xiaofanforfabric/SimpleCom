@@ -1,0 +1,7 @@
+name: bukkitserver
+version: 'v0.1'
+main: com.xiaofan.bukkitserver.Bukkitserver
+api-version: '1.13'
+load: STARTUP
+authors: [xiaofan]
+description: 简单的通讯器服务端

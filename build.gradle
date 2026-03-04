@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.xiaofan'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+def clientOutDir = layout.buildDirectory.dir('libs')
+def clientModDir = file('1.16.5forge-fabric')
+
+tasks.register('build1.16.5client', GradleBuild) {
+    group = 'build'
+    description = '打包 Fabric 和 Forge 1.16.5 客户端 mod（合并为单 jar）'
+    dir = clientModDir
+    tasks = ['mergeJars']
+    doLast {
+        def outDir = clientOutDir.get().asFile
+        outDir.mkdirs()
+        def mergedJar = file("${clientModDir}/build/libs/simplecom-1.0.0-merged.jar")
+        if (mergedJar.exists()) {
+            copy {
+                from mergedJar
+                into outDir
+                rename { 'simplecom-1.0.0.jar' }
+            }
+            logger.lifecycle("已复制到 ${outDir}: simplecom-1.0.0.jar（Forge+Fabric 合并）")
+        }
+    }
+}

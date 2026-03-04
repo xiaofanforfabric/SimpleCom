@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "simplecom",
+  "version": "${version}",
+  "name": "SimpleCom",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/simplecom/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.xiaofan.fabric.ExampleModFabric"
+    ],
+    "client": [
+      "com.xiaofan.fabric.client.ExampleModFabricClient"
+    ]
+  },
+  "mixins": [
+    "simplecom.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.16.5",
+    "java": ">=8",
+    "architectury": ">=1.32.68",
+    "fabric": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
