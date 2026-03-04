@@ -122,19 +122,29 @@ SimpleCom/
 
 ### English
 
+**Recommended**: `cd` into the client mod directory and use the standard `build` task:
+
 ```bash
-# Build merged client mod (Forge + Fabric in one JAR)
-./gradlew build1.16.5client
-# Output: build/libs/simplecom-1.0.0.jar
+cd 1.16.5forge-fabric
+./gradlew build
+# Output: forge/build/libs/simplecom-forge-1.0.0.jar, fabric/build/libs/simplecom-fabric-1.0.0.jar
+# Or run mergeJars for a single merged JAR: build/libs/simplecom-1.0.0-merged.jar
 ```
+
+> Note: The root task `build1.16.5client` may have issues; prefer building from within the project directory.
 
 ### 中文
 
+**推荐**：进入客户端模组目录后使用标准 `build` 任务：
+
 ```bash
-# 构建合并的客户端模组（Forge + Fabric 合为一个 JAR）
-./gradlew build1.16.5client
-# 输出：build/libs/simplecom-1.0.0.jar
+cd 1.16.5forge-fabric
+./gradlew build
+# 输出：forge/build/libs/simplecom-forge-1.0.0.jar、fabric/build/libs/simplecom-fabric-1.0.0.jar
+# 或执行 mergeJars 得到合并 JAR：build/libs/simplecom-1.0.0-merged.jar
 ```
+
+> 说明：根目录的 `build1.16.5client` 任务可能存在问题，建议在项目目录内构建。
 
 ---
 
