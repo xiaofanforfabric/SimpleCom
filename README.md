@@ -162,6 +162,28 @@ cd 1.16.5forge-fabric
 
 ---
 
+## Donate / 捐赠
+
+### English
+
+**Cryptocurrency (USDT):**
+
+- **USDT on TRON:** `TDoJuuSBTztZFVQuVC7xeEESfFbktBUb9W`
+- **USDT on Ethereum:** `0x9ce2b2de37976da8e795e7a3ff4badb60b3c8487`
+- **USDT on BNB Chain:** `0x9ce2b2de37976da8e795e7a3ff4badb60b3c8487`
+- **USDT on Polygon:** `0x9ce2b2de37976da8e795e7a3ff4badb60b3c8487`
+- **USDT on X Layer:** `0x9ce2b2de37976da8e795e7a3ff4badb60b3c8487`
+
+Thank you for your support.
+
+### 中文
+
+**微信 / 支付宝：** 占位，后续会上传收款二维码。
+
+感谢支持。
+
+---
+
 ## License / 许可证
 
 GNU LESSER GENERAL PUBLIC LICENSE
