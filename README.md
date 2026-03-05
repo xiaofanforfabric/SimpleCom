@@ -178,7 +178,10 @@ Thank you for your support.
 
 ### 中文
 
-**微信 / 支付宝：** 占位，后续会上传收款二维码。
+**微信 / 支付宝：** 
+<img width="943" height="943" alt="mm_reward_qrcode_1771753353154" src="https://github.com/user-attachments/assets/f3feb475-ca97-4678-a1b7-47e5abeadda4" />
+![1767020347650](https://github.com/user-attachments/assets/7c1fcbae-6a37-46e1-ab6d-90c2601bf0e6)
+
 
 感谢支持。
 
