@@ -116,6 +116,75 @@ public final class SimpleComVoiceClient {
         }
     }
 
+    // ---------- 加密信道 ----------
+    public static final class EncryptedCreateResult {
+        public final boolean success;
+        public final int channelId;
+        public EncryptedCreateResult(boolean success, int channelId) { this.success = success; this.channelId = channelId; }
+    }
+    public static final class EncryptedJoinResult {
+        public final boolean success;
+        public final int channelId;
+        public EncryptedJoinResult(boolean success, int channelId) { this.success = success; this.channelId = channelId; }
+    }
+
+    private static volatile EncryptedChannelSender encryptedChannelSender;
+    private static volatile java.util.function.Consumer<EncryptedCreateResult> encryptedCreateResponseHandler;
+    private static volatile java.util.function.Consumer<java.util.List<String>> encryptedListResponseHandler;
+    private static volatile java.util.function.Consumer<EncryptedJoinResult> encryptedJoinResponseHandler;
+
+    public interface EncryptedChannelSender {
+        void sendCreate(String name, String passwordHash);
+        void requestList();
+        void sendJoin(String name, String passwordHash);
+    }
+
+    public static void setEncryptedChannelSender(EncryptedChannelSender sender) {
+        encryptedChannelSender = sender;
+    }
+
+    public static void sendEncryptedCreate(String name, String passwordHash) {
+        if (encryptedChannelSender != null) encryptedChannelSender.sendCreate(name, passwordHash);
+    }
+
+    public static void requestEncryptedList() {
+        if (encryptedChannelSender != null) encryptedChannelSender.requestList();
+    }
+
+    public static void sendEncryptedJoin(String name, String passwordHash) {
+        if (encryptedChannelSender != null) encryptedChannelSender.sendJoin(name, passwordHash);
+    }
+
+    public static void setEncryptedCreateResponseHandler(java.util.function.Consumer<EncryptedCreateResult> h) {
+        encryptedCreateResponseHandler = h;
+    }
+
+    public static void setEncryptedListResponseHandler(java.util.function.Consumer<java.util.List<String>> h) {
+        encryptedListResponseHandler = h;
+    }
+
+    public static void setEncryptedJoinResponseHandler(java.util.function.Consumer<EncryptedJoinResult> h) {
+        encryptedJoinResponseHandler = h;
+    }
+
+    public static void onEncryptedCreateResponse(boolean success, int channelId) {
+        if (encryptedCreateResponseHandler != null) {
+            encryptedCreateResponseHandler.accept(new EncryptedCreateResult(success, channelId));
+        }
+    }
+
+    public static void onEncryptedListResponse(java.util.List<String> names) {
+        if (encryptedListResponseHandler != null && names != null) {
+            encryptedListResponseHandler.accept(names);
+        }
+    }
+
+    public static void onEncryptedJoinResponse(boolean success, int channelId) {
+        if (encryptedJoinResponseHandler != null) {
+            encryptedJoinResponseHandler.accept(new EncryptedJoinResult(success, channelId));
+        }
+    }
+
     public static String getConnectSuccessMessage(String serverType) {
         return String.format(MSG_CONNECT_SUCCESS, serverType != null && !serverType.isEmpty() ? serverType : "未知", getVoiceKeyDisplayName());
     }

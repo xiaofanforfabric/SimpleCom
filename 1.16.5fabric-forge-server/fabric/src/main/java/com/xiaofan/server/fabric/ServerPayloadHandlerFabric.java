@@ -1,6 +1,7 @@
 package com.xiaofan.server.fabric;
 
 import com.xiaofan.server.SimpleComServerConfig;
+import com.xiaofan.server.payload.EncryptedChannelStore;
 import com.xiaofan.server.payload.SimpleComChannels;
 import com.xiaofan.server.payload.ServerPayloadHandler;
 import com.xiaofan.server.payload.VarIntUtil;
@@ -35,6 +36,8 @@ public final class ServerPayloadHandlerFabric extends ServerPayloadHandler {
                 net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir(),
                 "fabric"
         );
+        setEncryptedChannelStore(new EncryptedChannelStore(
+                net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir()));
         LOGGER.info("[SimpleCom] 已启用，使用 payload 通道传输数据，压缩编码器：{}，低延迟：{}",
                 config.isUseCompressionEncoder() ? "启用" : "关闭",
                 config.isLowLatency() ? "开启" : "关闭");
@@ -42,7 +45,10 @@ public final class ServerPayloadHandlerFabric extends ServerPayloadHandler {
 
     public void register() {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, srv) -> onPlayerJoin(handler.player));
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, srv) -> handshakeTasks.remove(handler.player.getUuid()));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, srv) -> {
+            onPlayerDisconnect(handler.player.getUuid());
+            handshakeTasks.remove(handler.player.getUuid());
+        });
 
         ServerTickEvents.END_SERVER_TICK.register(srv -> {
             long tick = srv.getOverworld().getTime();
@@ -65,7 +71,7 @@ public final class ServerPayloadHandlerFabric extends ServerPayloadHandler {
             try {
                 if (data.length > 1) data = Arrays.copyOfRange(data, 1, data.length);
                 ch = VarIntUtil.readVarInt(data != null ? data : new byte[0]);
-                ch = Math.max(0, Math.min(100, ch));
+                ch = Math.max(0, Math.min(CHANNEL_MAX, ch));
             } catch (Exception ignored) {}
             onHandshakeAck(player.getUuid(), ch);
         });
@@ -80,6 +86,18 @@ public final class ServerPayloadHandlerFabric extends ServerPayloadHandler {
             byte[] data = new byte[buf.readableBytes()];
             buf.readBytes(data);
             onChannelSwitch(player.getUuid(), data);
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(SimpleComChannels.ENCRYPTED_CREATE, (srv, player, handler, buf, responseSender) -> {
+            byte[] data = new byte[buf.readableBytes()];
+            buf.readBytes(data);
+            onEncryptedCreate(player.getUuid(), data);
+        });
+        ServerPlayNetworking.registerGlobalReceiver(SimpleComChannels.ENCRYPTED_LIST, (srv, player, handler, buf, responseSender) -> onEncryptedList(player.getUuid()));
+        ServerPlayNetworking.registerGlobalReceiver(SimpleComChannels.ENCRYPTED_JOIN, (srv, player, handler, buf, responseSender) -> {
+            byte[] data = new byte[buf.readableBytes()];
+            buf.readBytes(data);
+            onEncryptedJoin(player.getUuid(), data);
         });
 
         LOGGER.info("[SimpleCom] Fabric 服务端 payload 已注册");
@@ -133,7 +151,7 @@ public final class ServerPayloadHandlerFabric extends ServerPayloadHandler {
         if (data == null) return;
         try {
             int ch = VarIntUtil.readVarInt(data);
-            ch = Math.max(0, Math.min(100, ch));
+            ch = Math.max(0, Math.min(CHANNEL_MAX, ch));
             setPlayerChannel(playerId, ch);
             logInfo(getPlayerName(playerId) + " 已切换到" + ch + "信道");
             byte[] ack = buildChannelSwitchAckPayload(ch);

@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.xiaofan.client.SimpleComVoiceClient;
 import com.xiaofan.client.gui.ChannelScreen;
+import com.xiaofan.client.gui.EncryptedChannelStatusScreen;
 import com.xiaofan.config.SimpleComConfig;
 import com.xiaofan.payload.HandshakePayloadAdapter;
 
@@ -73,6 +74,25 @@ public final class HandshakePayloadReceiver {
             v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
     );
 
+    public static final EventNetworkChannel ENCRYPTED_CREATE_CHANNEL = NetworkRegistry.newEventChannel(
+            HandshakePayloadAdapter.ENCRYPTED_CREATE_CHANNEL,
+            () -> PROTOCOL,
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+    );
+    public static final EventNetworkChannel ENCRYPTED_LIST_CHANNEL = NetworkRegistry.newEventChannel(
+            HandshakePayloadAdapter.ENCRYPTED_LIST_CHANNEL,
+            () -> PROTOCOL,
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+    );
+    public static final EventNetworkChannel ENCRYPTED_JOIN_CHANNEL = NetworkRegistry.newEventChannel(
+            HandshakePayloadAdapter.ENCRYPTED_JOIN_CHANNEL,
+            () -> PROTOCOL,
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+            v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+    );
+
     private static int packetId = 0;
 
     public static void register() {
@@ -82,7 +102,25 @@ public final class HandshakePayloadReceiver {
         SimpleComVoiceClient.setChannelScreenOpener(() -> {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.currentScreen == null && mc.player != null) {
-                mc.openScreen(new ChannelScreen(mc.currentScreen));
+                if (SimpleComConfig.isInEncryptedChannel()) {
+                    mc.openScreen(new EncryptedChannelStatusScreen(mc.currentScreen));
+                } else {
+                    mc.openScreen(new ChannelScreen(mc.currentScreen));
+                }
+            }
+        });
+        SimpleComVoiceClient.setEncryptedChannelSender(new SimpleComVoiceClient.EncryptedChannelSender() {
+            @Override
+            public void sendCreate(String name, String passwordHash) {
+                sendEncryptedCreate(name, passwordHash);
+            }
+            @Override
+            public void requestList() {
+                requestEncryptedList();
+            }
+            @Override
+            public void sendJoin(String name, String passwordHash) {
+                sendEncryptedJoin(name, passwordHash);
             }
         });
         SimpleComVoiceClient.setChannelChangeCallback(ch -> {
@@ -154,6 +192,80 @@ public final class HandshakePayloadReceiver {
             });
             ctx.setPacketHandled(true);
         });
+        ENCRYPTED_CREATE_CHANNEL.addListener(event -> {
+            if (event == null) return;
+            PacketByteBuf buf = event.getPayload();
+            if (buf == null) return;
+            NetworkEvent.Context ctx = event.getSource() != null ? event.getSource().get() : null;
+            if (ctx == null) return;
+            boolean success = buf.readableBytes() > 0 && buf.readByte() != 0;
+            int channelId = 0;
+            if (success && buf.readableBytes() > 0) {
+                try { channelId = buf.readVarInt(); } catch (Exception ignored) { }
+            }
+            boolean ok = success;
+            int id = channelId;
+            ctx.enqueueWork(() -> SimpleComVoiceClient.onEncryptedCreateResponse(ok, id));
+            ctx.setPacketHandled(true);
+        });
+        ENCRYPTED_LIST_CHANNEL.addListener(event -> {
+            if (event == null) return;
+            PacketByteBuf buf = event.getPayload();
+            if (buf == null) return;
+            NetworkEvent.Context ctx = event.getSource() != null ? event.getSource().get() : null;
+            if (ctx == null) return;
+            java.util.List<String> names = new java.util.ArrayList<>();
+            try {
+                int n = buf.readVarInt();
+                for (int i = 0; i < n; i++) {
+                    names.add(buf.readString(32767));
+                }
+            } catch (Exception ignored) { }
+            java.util.List<String> list = names;
+            ctx.enqueueWork(() -> SimpleComVoiceClient.onEncryptedListResponse(list));
+            ctx.setPacketHandled(true);
+        });
+        ENCRYPTED_JOIN_CHANNEL.addListener(event -> {
+            if (event == null) return;
+            PacketByteBuf buf = event.getPayload();
+            if (buf == null) return;
+            NetworkEvent.Context ctx = event.getSource() != null ? event.getSource().get() : null;
+            if (ctx == null) return;
+            boolean success = buf.readableBytes() > 0 && buf.readByte() != 0;
+            int channelId = 0;
+            if (success && buf.readableBytes() > 0) {
+                try { channelId = buf.readVarInt(); } catch (Exception ignored) { }
+            }
+            boolean ok = success;
+            int id = channelId;
+            ctx.enqueueWork(() -> SimpleComVoiceClient.onEncryptedJoinResponse(ok, id));
+            ctx.setPacketHandled(true);
+        });
+    }
+
+    public static void sendEncryptedCreate(String name, String passwordHash) {
+        net.minecraft.client.network.ClientPlayNetworkHandler conn = MinecraftClient.getInstance().getNetworkHandler();
+        if (conn == null) return;
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeString(name);
+        buf.writeString(passwordHash != null ? passwordHash : "");
+        conn.getConnection().send(new CustomPayloadC2SPacket(HandshakePayloadAdapter.ENCRYPTED_CREATE_CHANNEL, buf));
+    }
+
+    public static void requestEncryptedList() {
+        net.minecraft.client.network.ClientPlayNetworkHandler conn = MinecraftClient.getInstance().getNetworkHandler();
+        if (conn == null) return;
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        conn.getConnection().send(new CustomPayloadC2SPacket(HandshakePayloadAdapter.ENCRYPTED_LIST_CHANNEL, buf));
+    }
+
+    public static void sendEncryptedJoin(String name, String passwordHash) {
+        net.minecraft.client.network.ClientPlayNetworkHandler conn = MinecraftClient.getInstance().getNetworkHandler();
+        if (conn == null) return;
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeString(name);
+        buf.writeString(passwordHash != null ? passwordHash : "");
+        conn.getConnection().send(new CustomPayloadC2SPacket(HandshakePayloadAdapter.ENCRYPTED_JOIN_CHANNEL, buf));
     }
 
     public static class HandshakeAckMessage {

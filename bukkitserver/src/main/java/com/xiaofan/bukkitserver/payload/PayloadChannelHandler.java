@@ -22,14 +22,26 @@ public final class PayloadChannelHandler {
 
     private final JavaPlugin plugin;
     private final Map<UUID, Integer> playerChannels = new ConcurrentHashMap<>();
+    private volatile EncryptedChannelStore encryptedChannelStore;
 
     public PayloadChannelHandler(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
+    public void setEncryptedChannelStore(EncryptedChannelStore store) {
+        this.encryptedChannelStore = store;
+    }
+
+    /** 普通信道 0~100，加密信道 >100，最大允许 10000 */
+    public static final int CHANNEL_MAX = 10000;
+
     public void setPlayerChannel(Player player, int channel) {
-        if (player != null) {
-            playerChannels.put(player.getUniqueId(), Math.max(0, Math.min(100, channel)));
+        if (player == null) return;
+        int oldChannel = playerChannels.getOrDefault(player.getUniqueId(), 1);
+        int newCh = Math.max(0, Math.min(CHANNEL_MAX, channel));
+        playerChannels.put(player.getUniqueId(), newCh);
+        if (oldChannel >= SimpleComChannels.ENCRYPTED_CHANNEL_ID_START) {
+            checkAndRemoveEmptyEncryptedChannel(oldChannel);
         }
     }
 
@@ -38,11 +50,40 @@ public final class PayloadChannelHandler {
         return playerChannels.getOrDefault(player.getUniqueId(), 1);
     }
 
+    /** 当前在指定信道内的玩家数（用于加密信道无人时销毁） */
+    public int countPlayersInChannel(int channelId) {
+        int count = 0;
+        for (Integer ch : playerChannels.values()) {
+            if (ch != null && ch == channelId) count++;
+        }
+        return count;
+    }
+
+    /** 若该加密信道已无人则从 store 中移除并持久化 */
+    public void checkAndRemoveEmptyEncryptedChannel(int channelId) {
+        if (channelId < SimpleComChannels.ENCRYPTED_CHANNEL_ID_START) return;
+        if (encryptedChannelStore == null) return;
+        if (countPlayersInChannel(channelId) > 0) return;
+        String removed = encryptedChannelStore.removeByChannelId(channelId);
+        if (removed != null) {
+            plugin.getLogger().info("[SimpleCom] 加密信道已无人，已销毁: " + removed + " (ID " + channelId + ")");
+        }
+    }
+
+    /** 玩家下线时调用：从信道表移除，若原在加密信道且该信道无人则销毁 */
+    public void onPlayerQuit(Player player) {
+        if (player == null) return;
+        Integer channel = playerChannels.remove(player.getUniqueId());
+        if (channel != null && channel >= SimpleComChannels.ENCRYPTED_CHANNEL_ID_START) {
+            checkAndRemoveEmptyEncryptedChannel(channel);
+        }
+    }
+
     public void onChannelSwitch(Player player, byte[] data) {
         if (player == null || data == null) return;
         try {
             int ch = VarIntUtil.readVarInt(data);
-            ch = Math.max(0, Math.min(100, ch));
+            ch = Math.max(0, Math.min(CHANNEL_MAX, ch));
             setPlayerChannel(player, ch);
             plugin.getLogger().info(player.getName() + " 已切换到" + ch + "信道");
 

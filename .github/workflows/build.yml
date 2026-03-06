@@ -248,4 +248,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           generate_release_notes: true
+          replace_assets: false
           files: release/*.jar

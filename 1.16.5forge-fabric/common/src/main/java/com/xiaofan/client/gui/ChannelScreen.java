@@ -16,6 +16,8 @@ public class ChannelScreen extends Screen {
     private static final String HINT = "请输入你的信道（默认1），0静音，范围1~100";
     private static final String CONFIRM = "确认";
     private static final String CANCEL = "取消";
+    private static final String BTN_CREATE_ENCRYPTED = "创建加密信道";
+    private static final String BTN_CONNECT_ENCRYPTED = "连接加密信道";
 
     private TextFieldWidget channelField;
     private final Screen parent;
@@ -34,11 +36,19 @@ public class ChannelScreen extends Screen {
 
         channelField = new TextFieldWidget(textRenderer, centerX - fieldWidth / 2, height / 2 - 30, fieldWidth, fieldHeight, new LiteralText("channel"));
         channelField.setMaxLength(4);
-        channelField.setText(String.valueOf(SimpleComConfig.getChannel()));
+        int ch = SimpleComConfig.getChannel();
+        channelField.setText(ch <= 100 ? String.valueOf(ch) : "1");
         addChild(channelField);
 
         addButton(new ButtonWidget(centerX - 105, height / 2 + 10, 100, 20, new LiteralText(CANCEL), b -> onClose()));
         addButton(new ButtonWidget(centerX + 5, height / 2 + 10, 100, 20, new LiteralText(CONFIRM), b -> onConfirm()));
+
+        addButton(new ButtonWidget(centerX - 105, height / 2 + 40, 100, 20, new LiteralText(BTN_CREATE_ENCRYPTED), b -> {
+            if (client != null) client.openScreen(new CreateEncryptedChannelScreen(parent));
+        }));
+        addButton(new ButtonWidget(centerX + 5, height / 2 + 40, 100, 20, new LiteralText(BTN_CONNECT_ENCRYPTED), b -> {
+            if (client != null) client.openScreen(new ConnectEncryptedChannelScreen(parent));
+        }));
     }
 
     private void onConfirm() {

@@ -16,6 +16,9 @@ public final class HandshakePayloadAdapter {
     public static final Identifier VOICE_DATA_CHANNEL = new Identifier("simplecom", "voice_data");
     public static final Identifier CHANNEL_SWITCH_CHANNEL = new Identifier("simplecom", "channel_switch");
     public static final Identifier CHANNEL_SWITCH_ACK_CHANNEL = new Identifier("simplecom", "channel_switch_ack");
+    public static final Identifier ENCRYPTED_CREATE_CHANNEL = new Identifier("simplecom", "encrypted_create");
+    public static final Identifier ENCRYPTED_LIST_CHANNEL = new Identifier("simplecom", "encrypted_list");
+    public static final Identifier ENCRYPTED_JOIN_CHANNEL = new Identifier("simplecom", "encrypted_join");
 
     private static volatile boolean serverHasPlugin = false;
     private static volatile String serverPluginVersion = "";

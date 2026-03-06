@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "simplecom",
+  "version": "${version}",
+  "name": "SimpleCom Server",
+  "description": "SimpleCom 服务端模组，提供语音通信与信道切换功能。配合 SimpleCom 客户端模组使用，支持 Fabric 1.19.2 服务端。",
+  "authors": [
+    "xiaofan"
+  ],
+  "contact": {
+    "homepage": "https://github.com/xiaofanforfabric/SimpleCom",
+    "sources": "https://github.com/xiaofanforfabric/SimpleCom"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/simplecom/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.xiaofan.server.fabric.ExampleModFabric"
+    ]
+  },
+  "mixins": [
+    "simplecom.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "minecraft": "~1.19.2",
+    "java": ">=17",
+    "architectury": ">=6.0.0",
+    "fabric": "*"
+  }
+}

@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.xiaofan.client.SimpleComVoiceClient;
 import com.xiaofan.client.gui.ChannelScreen;
+import com.xiaofan.client.gui.EncryptedChannelStatusScreen;
 import com.xiaofan.config.SimpleComConfig;
 import com.xiaofan.payload.HandshakePayloadAdapter;
 import com.xiaofan.voice.VoicePacket;
@@ -54,7 +55,37 @@ public final class ExampleModFabricClient implements ClientModInitializer {
         SimpleComVoiceClient.setChannelScreenOpener(() -> {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.currentScreen == null && mc.player != null) {
-                mc.setScreen(new ChannelScreen(mc.currentScreen));
+                if (SimpleComConfig.isInEncryptedChannel()) {
+                    mc.setScreen(new EncryptedChannelStatusScreen(mc.currentScreen));
+                } else {
+                    mc.setScreen(new ChannelScreen(mc.currentScreen));
+                }
+            }
+        });
+        SimpleComVoiceClient.setEncryptedChannelSender(new SimpleComVoiceClient.EncryptedChannelSender() {
+            @Override
+            public void sendCreate(String name, String passwordHash) {
+                if (ClientPlayNetworking.canSend(HandshakePayloadAdapter.ENCRYPTED_CREATE_CHANNEL)) {
+                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                    buf.writeString(name);
+                    buf.writeString(passwordHash != null ? passwordHash : "");
+                    ClientPlayNetworking.send(HandshakePayloadAdapter.ENCRYPTED_CREATE_CHANNEL, buf);
+                }
+            }
+            @Override
+            public void requestList() {
+                if (ClientPlayNetworking.canSend(HandshakePayloadAdapter.ENCRYPTED_LIST_CHANNEL)) {
+                    ClientPlayNetworking.send(HandshakePayloadAdapter.ENCRYPTED_LIST_CHANNEL, new PacketByteBuf(Unpooled.buffer()));
+                }
+            }
+            @Override
+            public void sendJoin(String name, String passwordHash) {
+                if (ClientPlayNetworking.canSend(HandshakePayloadAdapter.ENCRYPTED_JOIN_CHANNEL)) {
+                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                    buf.writeString(name);
+                    buf.writeString(passwordHash != null ? passwordHash : "");
+                    ClientPlayNetworking.send(HandshakePayloadAdapter.ENCRYPTED_JOIN_CHANNEL, buf);
+                }
             }
         });
         SimpleComVoiceClient.setChannelChangeCallback(ch -> {
@@ -133,6 +164,38 @@ public final class ExampleModFabricClient implements ClientModInitializer {
                     client.player.sendMessage(new LiteralText("信道已成功切换到" + finalCh), false);
                 }
             });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(HandshakePayloadAdapter.ENCRYPTED_CREATE_CHANNEL, (client, handler, buf, responseSender) -> {
+            boolean success = buf.readableBytes() > 0 && buf.readByte() != 0;
+            int channelId = 0;
+            if (success && buf.readableBytes() > 0) {
+                try { channelId = buf.readVarInt(); } catch (Exception ignored) { }
+            }
+            boolean ok = success;
+            int id = channelId;
+            client.execute(() -> SimpleComVoiceClient.onEncryptedCreateResponse(ok, id));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(HandshakePayloadAdapter.ENCRYPTED_LIST_CHANNEL, (client, handler, buf, responseSender) -> {
+            List<String> names = new java.util.ArrayList<>();
+            try {
+                int n = buf.readVarInt();
+                for (int i = 0; i < n; i++) {
+                    names.add(buf.readString(32767));
+                }
+            } catch (Exception ignored) { }
+            List<String> list = names;
+            client.execute(() -> SimpleComVoiceClient.onEncryptedListResponse(list));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(HandshakePayloadAdapter.ENCRYPTED_JOIN_CHANNEL, (client, handler, buf, responseSender) -> {
+            boolean success = buf.readableBytes() > 0 && buf.readByte() != 0;
+            int channelId = 0;
+            if (success && buf.readableBytes() > 0) {
+                try { channelId = buf.readVarInt(); } catch (Exception ignored) { }
+            }
+            boolean ok = success;
+            int id = channelId;
+            client.execute(() -> SimpleComVoiceClient.onEncryptedJoinResponse(ok, id));
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

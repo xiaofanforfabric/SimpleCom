@@ -1,6 +1,7 @@
 package com.xiaofan.server.forge;
 
 import com.xiaofan.server.SimpleComServerConfig;
+import com.xiaofan.server.payload.EncryptedChannelStore;
 import com.xiaofan.server.payload.SimpleComChannels;
 import com.xiaofan.server.payload.ServerPayloadHandler;
 import com.xiaofan.server.payload.VarIntUtil;
@@ -37,6 +38,8 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
                 net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get(),
                 "forge"
         );
+        setEncryptedChannelStore(new EncryptedChannelStore(
+                net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get().resolve("simplecom-server")));
         LOGGER.info("[SimpleCom] 已启用，使用 payload 通道传输数据，压缩编码器：{}，低延迟：{}",
                 config.isUseCompressionEncoder() ? "启用" : "关闭",
                 config.isLowLatency() ? "开启" : "关闭");
@@ -56,6 +59,28 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
                 v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
                 v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
         );
+
+        EventNetworkChannel encryptedCreate = NetworkRegistry.newEventChannel(
+                SimpleComChannels.ENCRYPTED_CREATE,
+                () -> PROTOCOL,
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+        );
+        encryptedCreate.addListener(ev -> onEncryptedCreateEvent((net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent) ev));
+        EventNetworkChannel encryptedList = NetworkRegistry.newEventChannel(
+                SimpleComChannels.ENCRYPTED_LIST,
+                () -> PROTOCOL,
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+        );
+        encryptedList.addListener(ev -> onEncryptedListEvent((net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent) ev));
+        EventNetworkChannel encryptedJoin = NetworkRegistry.newEventChannel(
+                SimpleComChannels.ENCRYPTED_JOIN,
+                () -> PROTOCOL,
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ACCEPTVANILLA.equals(v),
+                v -> PROTOCOL.equals(v) || NetworkRegistry.ABSENT.equals(v)
+        );
+        encryptedJoin.addListener(ev -> onEncryptedJoinEvent((net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent) ev));
 
         EventNetworkChannel handshakeAck = NetworkRegistry.newEventChannel(
                 SimpleComChannels.HANDSHAKE_ACK,
@@ -111,6 +136,9 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
 
     @SubscribeEvent
     public void onPlayerLeave(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getPlayer() instanceof ServerPlayerEntity) {
+            onPlayerDisconnect(event.getPlayer().getUuid());
+        }
         handshakeTasks.remove(event.getPlayer().getUuid());
     }
 
@@ -143,7 +171,7 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
             try {
                 if (data.length > 1) data = Arrays.copyOfRange(data, 1, data.length);
                 ch = VarIntUtil.readVarInt(data != null ? data : new byte[0]);
-                ch = Math.max(0, Math.min(100, ch));
+                ch = Math.max(0, Math.min(CHANNEL_MAX, ch));
             } catch (Exception ignored) {}
             onHandshakeAck(player.getUuid(), ch);
         });
@@ -200,7 +228,7 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
         if (data == null) return;
         try {
             int ch = VarIntUtil.readVarInt(data);
-            ch = Math.max(0, Math.min(100, ch));
+            ch = Math.max(0, Math.min(CHANNEL_MAX, ch));
             setPlayerChannel(playerId, ch);
             logInfo(getPlayerName(playerId) + " 已切换到" + ch + "信道");
             byte[] ack = buildChannelSwitchAckPayload(ch);
@@ -261,5 +289,38 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
     @Override
     public void logWarning(String msg) {
         LOGGER.warn("[SimpleCom] {}", msg);
+    }
+
+    private void onEncryptedCreateEvent(net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent event) {
+        event.getSource().get().enqueueWork(() -> {
+            ServerPlayerEntity player = event.getSource().get().getSender();
+            if (player == null) return;
+            PacketByteBuf buf = event.getPayload();
+            byte[] data = new byte[buf.readableBytes()];
+            buf.readBytes(data);
+            onEncryptedCreate(player.getUuid(), data);
+        });
+        event.getSource().get().setPacketHandled(true);
+    }
+
+    private void onEncryptedListEvent(net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent event) {
+        event.getSource().get().enqueueWork(() -> {
+            ServerPlayerEntity player = event.getSource().get().getSender();
+            if (player == null) return;
+            onEncryptedList(player.getUuid());
+        });
+        event.getSource().get().setPacketHandled(true);
+    }
+
+    private void onEncryptedJoinEvent(net.minecraftforge.fml.network.NetworkEvent.ClientCustomPayloadEvent event) {
+        event.getSource().get().enqueueWork(() -> {
+            ServerPlayerEntity player = event.getSource().get().getSender();
+            if (player == null) return;
+            PacketByteBuf buf = event.getPayload();
+            byte[] data = new byte[buf.readableBytes()];
+            buf.readBytes(data);
+            onEncryptedJoin(player.getUuid(), data);
+        });
+        event.getSource().get().setPacketHandled(true);
     }
 }

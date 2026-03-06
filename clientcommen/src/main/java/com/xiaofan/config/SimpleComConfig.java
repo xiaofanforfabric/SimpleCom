@@ -16,9 +16,13 @@ public final class SimpleComConfig {
 
     private static volatile int channel = 1;
     private static volatile Path configDir;
+    /** 当前加密信道名称（仅内存，不持久化），>100 信道时显示用 */
+    private static volatile String encryptedChannelName = null;
 
     public static final int CHANNEL_MIN = 0;
     public static final int CHANNEL_MAX = 100;
+    /** 加密信道 ID 起始值，与服务端一致 */
+    public static final int ENCRYPTED_CHANNEL_ID_START = 101;
     public static final int CHANNEL_DEFAULT = 1;
 
     private SimpleComConfig() {
@@ -36,7 +40,31 @@ public final class SimpleComConfig {
 
     public static void setChannel(int ch) {
         channel = clampChannel(ch);
+        if (channel <= CHANNEL_MAX) encryptedChannelName = null;
         save();
+    }
+
+    /** 不限制范围，用于加密信道 ID（>100）；若 ch<=100 会清除加密信道名 */
+    public static void setChannelUnclamped(int ch) {
+        channel = Math.max(0, Math.min(10000, ch));
+        if (channel <= CHANNEL_MAX) encryptedChannelName = null;
+        save();
+    }
+
+    public static boolean isInEncryptedChannel() {
+        return channel >= ENCRYPTED_CHANNEL_ID_START;
+    }
+
+    public static String getEncryptedChannelName() {
+        return encryptedChannelName;
+    }
+
+    public static void setEncryptedChannelName(String name) {
+        encryptedChannelName = name != null ? name : "";
+    }
+
+    public static void clearEncryptedChannelName() {
+        encryptedChannelName = null;
     }
 
     public static int clampChannel(int ch) {
