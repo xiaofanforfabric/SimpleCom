@@ -4,9 +4,9 @@ name: Build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "V1.1" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "V1.1" ]
 
 jobs:
   build-bukkitserver:
