@@ -39,7 +39,7 @@ jobs:
           name: bukkitserver
           path: bukkitserver/build/libs/*.jar
 
-  build-1.16.5-client:
+  build-1-16-5-client:
     name: 1.16.5 模组客户端
     runs-on: ubuntu-latest
     permissions:
@@ -85,7 +85,7 @@ jobs:
           name: simplecom-1.16.5-merged
           path: 1.16.5forge-fabric/build/libs/simplecom-*-merged.jar
 
-  build-1.18.2-client:
+  build-1-18-2-client:
     name: 1.18.2 模组客户端
     runs-on: ubuntu-latest
     permissions:
@@ -131,7 +131,7 @@ jobs:
           name: simplecom-1.18.2-merged
           path: 1.18.2forge-fabric/build/libs/simplecom-*-merged.jar
 
-  build-1.16.5-server-mod:
+  build-1-16-5-server-mod:
     name: 1.16.5 模组服务端
     runs-on: ubuntu-latest
     permissions:
@@ -171,7 +171,7 @@ jobs:
           name: simplecom-server-1.16.5-forge
           path: 1.16.5fabric-forge-server/forge/build/libs/simplecom-server-forge-*.jar
 
-  build-1.18.2-server-mod:
+  build-1-18-2-server-mod:
     name: 1.18.2 模组服务端
     runs-on: ubuntu-latest
     permissions:
