@@ -1,13 +1,13 @@
-# SimpleCom CI: 构建 1.16.5/1.18.2 模组客户端、模组服务端、Bukkit 插件，并发布产物
+# SimpleCom CI: 构建 1.16.5/1.18.2/1.19.2 模组客户端、模组服务端、Bukkit 插件，并发布产物
 
 name: Build
 
 on:
   push:
-    branches: [ "master", "V1.1" ]
+    branches: [ "master", "V1.2" ]
     tags: [ "v*", "V*" ]
   pull_request:
-    branches: [ "master", "V1.1" ]
+    branches: [ "master", "V1.2" ]
 
 jobs:
   build-bukkitserver:
@@ -132,6 +132,92 @@ jobs:
           name: simplecom-1.18.2-merged
           path: 1.18.2forge-fabric/build/libs/simplecom-*-merged.jar
 
+  build-1-19-2-client:
+    name: 1.19.2 模组客户端
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: 1.19.2forge-fabric
+
+      - name: Fix gradlew
+        working-directory: 1.19.2forge-fabric
+        run: chmod +x gradlew
+
+      - name: Build client mod
+        working-directory: 1.19.2forge-fabric
+        run: ./gradlew build mergeJars
+
+      - name: Upload 1.19.2 Forge
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-1.19.2-forge
+          path: 1.19.2forge-fabric/forge/build/libs/simplecom-forge-*.jar
+
+      - name: Upload 1.19.2 Fabric
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-1.19.2-fabric
+          path: 1.19.2forge-fabric/fabric/build/libs/simplecom-fabric-*.jar
+
+      - name: Upload 1.19.2 merged
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-1.19.2-merged
+          path: 1.19.2forge-fabric/build/libs/simplecom-*-merged.jar
+
+  build-1-19-2-server-mod:
+    name: 1.19.2 模组服务端
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: 1.19.2fabric-forge-server
+
+      - name: Fix gradlew
+        working-directory: 1.19.2fabric-forge-server
+        run: chmod +x gradlew
+
+      - name: Build server mod
+        working-directory: 1.19.2fabric-forge-server
+        run: ./gradlew build
+
+      - name: Upload 1.19.2 server Fabric
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-server-1.19.2-fabric
+          path: 1.19.2fabric-forge-server/fabric/build/libs/simplecom-server-fabric-*.jar
+
+      - name: Upload 1.19.2 server Forge
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-server-1.19.2-forge
+          path: 1.19.2fabric-forge-server/forge/build/libs/simplecom-server-forge-*.jar
+
   build-1-16-5-server-mod:
     name: 1.16.5 模组服务端
     runs-on: ubuntu-latest
@@ -171,6 +257,46 @@ jobs:
         with:
           name: simplecom-server-1.16.5-forge
           path: 1.16.5fabric-forge-server/forge/build/libs/simplecom-server-forge-*.jar
+
+  build-1-19-2-server-mod:
+    name: 1.19.2 模组服务端
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: 1.19.2fabric-forge-server
+
+      - name: Fix gradlew
+        working-directory: 1.19.2fabric-forge-server
+        run: chmod +x gradlew
+
+      - name: Build server mod
+        working-directory: 1.19.2fabric-forge-server
+        run: ./gradlew build
+
+      - name: Upload 1.19.2 server Fabric
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-server-1.19.2-fabric
+          path: 1.19.2fabric-forge-server/fabric/build/libs/simplecom-server-fabric-*.jar
+
+      - name: Upload 1.19.2 server Forge
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplecom-server-1.19.2-forge
+          path: 1.19.2fabric-forge-server/forge/build/libs/simplecom-server-forge-*.jar
 
   build-1-18-2-server-mod:
     name: 1.18.2 模组服务端
