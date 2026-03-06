@@ -9,6 +9,8 @@ public final class VoicePacket {
 
     public static final String CHANNEL_PLACEHOLDER = "1";
     public static final int CHUNK_SIZE = 30 * 1024; // 30KB
+    /** 低延迟模式下每 2KB 立即发送 */
+    public static final int LOW_LATENCY_CHUNK_SIZE = 2 * 1024; // 2KB
 
     private final String username;
     private final String channel;

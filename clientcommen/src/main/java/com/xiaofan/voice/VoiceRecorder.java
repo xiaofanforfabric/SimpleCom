@@ -43,7 +43,9 @@ public final class VoiceRecorder {
     private final List<short[]> recordedChunks = new ArrayList<>();
 
     private void doRecord() {
-        recordedChunks.clear();
+        synchronized (recordedChunks) {
+            recordedChunks.clear();
+        }
         try {
             AudioFormat format = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BITS, CHANNELS, true, false);
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
@@ -62,7 +64,9 @@ public final class VoiceRecorder {
                 int read = line.read(buffer, 0, buffer.length);
                 if (read > 0) {
                     short[] pcm = bytesToShorts(buffer, read);
-                    recordedChunks.add(pcm);
+                    synchronized (recordedChunks) {
+                        recordedChunks.add(pcm);
+                    }
                 }
             }
         } catch (LineUnavailableException e) {
@@ -75,19 +79,21 @@ public final class VoiceRecorder {
         }
     }
 
-    /** 获取已录制的所有 PCM 并清空 */
+    /** 获取已录制的所有 PCM 并清空（可在录音过程中调用，用于低延迟边录边发） */
     public short[] drainRecorded() {
-        if (recordedChunks.isEmpty()) return new short[0];
-        int total = 0;
-        for (short[] c : recordedChunks) total += c.length;
-        short[] result = new short[total];
-        int pos = 0;
-        for (short[] c : recordedChunks) {
-            System.arraycopy(c, 0, result, pos, c.length);
-            pos += c.length;
+        synchronized (recordedChunks) {
+            if (recordedChunks.isEmpty()) return new short[0];
+            int total = 0;
+            for (short[] c : recordedChunks) total += c.length;
+            short[] result = new short[total];
+            int pos = 0;
+            for (short[] c : recordedChunks) {
+                System.arraycopy(c, 0, result, pos, c.length);
+                pos += c.length;
+            }
+            recordedChunks.clear();
+            return result;
         }
-        recordedChunks.clear();
-        return result;
     }
 
     public boolean isRecording() {

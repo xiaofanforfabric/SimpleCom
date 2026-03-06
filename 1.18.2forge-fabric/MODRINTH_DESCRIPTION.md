@@ -56,6 +56,28 @@
 
 ---
 
+## Version Compatibility / 版本兼容
+
+### English
+
+**Each release version is incompatible with other versions.** You must use matching client and server versions.
+
+- **V1.1** server (mod or Bukkit plugin) only works with **V1.1** client.
+- **V0.1** server only worked with **V1.0** client.
+
+Do not mix versions: e.g. V1.1 client on a V0.1 server will not work correctly.
+
+### 中文
+
+**每个版本与其它版本不兼容。** 客户端与服务端必须使用相同版本。
+
+- **V1.1** 服务端（模组或 Bukkit 插件）仅兼容 **V1.1** 客户端。
+- **V0.1** 服务端仅兼容 **V1.0** 客户端。
+
+请勿混用版本：例如 V1.1 客户端连接 V0.1 服务端将无法正常工作。
+
+---
+
 ## Requirements / 依赖说明
 
 ### English

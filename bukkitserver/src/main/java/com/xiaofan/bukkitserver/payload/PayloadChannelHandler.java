@@ -58,10 +58,12 @@ public final class PayloadChannelHandler {
 
     /**
      * 向玩家发送握手 payload，客户端收到后可确认服务端已安装插件
-     * 格式：[discriminator][protocol][VarInt+UTF8 version][VarInt+UTF8 name][VarInt+UTF8 serverType]
+     * 格式：[discriminator][protocol][VarInt+UTF8 version][VarInt+UTF8 name][VarInt+UTF8 serverType][byte useCompressionEncoder 0/1][byte lowLatency 0/1]
      */
     public void sendHandshake(Player player) {
         try {
+            boolean useCompression = plugin.getConfig().getBoolean("use_compression_encoder", false);
+            boolean lowLatency = plugin.getConfig().getBoolean("low_latency", false);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(baos);
 
@@ -70,6 +72,8 @@ public final class PayloadChannelHandler {
             writeVarIntString(out, plugin.getDescription().getVersion());
             writeVarIntString(out, plugin.getDescription().getName());
             writeVarIntString(out, "spigot");
+            out.writeByte(useCompression ? 1 : 0); // Use a compression encoder: false=0, true=1
+            out.writeByte(lowLatency ? 1 : 0);     // Low latency: false=0, true=1
 
             byte[] data = baos.toByteArray();
             player.sendPluginMessage(plugin, SimpleComChannels.HANDSHAKE, data);

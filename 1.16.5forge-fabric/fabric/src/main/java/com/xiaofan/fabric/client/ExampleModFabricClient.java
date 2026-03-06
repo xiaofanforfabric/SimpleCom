@@ -43,6 +43,8 @@ public final class ExampleModFabricClient implements ClientModInitializer {
     private static volatile long actionBarExpire = 0;
     private static final VoiceRecorder recorder = new VoiceRecorder();
     private static final VoicePacketAssembler assembler = new VoicePacketAssembler();
+    private static final int LOW_LATENCY_DRAIN_MS = 40;
+    private static long lastLowLatencyDrainTime = 0;
 
     @Override
     public void onInitializeClient() {
@@ -93,9 +95,13 @@ public final class ExampleModFabricClient implements ClientModInitializer {
                 client.execute(() -> {
                     cancelHandshakeTimeout();
                     HandshakePayloadAdapter.onHandshakeReceived(data);
-                    LOGGER.info("[SimpleCom] 收到服务端握手: {} v{}", data.name, data.version);
+                    assembler.setUseCompressionEncoder(data.useCompressionEncoder);
+                    assembler.setLowLatency(data.lowLatency);
+                    LOGGER.info("[SimpleCom] 收到服务端握手: {} v{} (compression={}, lowLatency={})", data.name, data.version, data.useCompressionEncoder, data.lowLatency);
                     if (client.player != null) {
                         client.player.sendMessage(new LiteralText(SimpleComVoiceClient.getConnectSuccessMessage(data.serverType)), false);
+                        client.player.sendMessage(new LiteralText(SimpleComVoiceClient.getCompressionStatusMessage(data.useCompressionEncoder)), false);
+                        client.player.sendMessage(new LiteralText(SimpleComVoiceClient.getLowLatencyStatusMessage(data.lowLatency)), false);
                         PacketByteBuf ackBuf = new PacketByteBuf(Unpooled.buffer());
                         ackBuf.writeByte(0);
                         ackBuf.writeVarInt(SimpleComConfig.getChannel());
@@ -143,13 +149,30 @@ public final class ExampleModFabricClient implements ClientModInitializer {
 
             if (held && !recorder.isRecording()) {
                 recorder.start();
+                lastLowLatencyDrainTime = System.currentTimeMillis();
                 SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.MSG_RECORDING);
             } else if (held) {
                 SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.MSG_RECORDING);
+                if (HandshakePayloadAdapter.lowLatency()) {
+                    long now = System.currentTimeMillis();
+                    if (now - lastLowLatencyDrainTime >= LOW_LATENCY_DRAIN_MS) {
+                        lastLowLatencyDrainTime = now;
+                        short[] pcm = recorder.drainRecorded();
+                        if (pcm != null && pcm.length > 0) {
+                            String name = client.player.getGameProfile().getName();
+                            scheduler.execute(() -> sendVoiceChunks(name, pcm, false));
+                        }
+                    }
+                }
             } else if (!held && recorder.isRecording()) {
                 short[] pcm = recorder.stop();
                 if (pcm != null && pcm.length > 0) {
-                    scheduler.execute(() -> sendVoiceChunks(client.player.getGameProfile().getName(), pcm));
+                    scheduler.execute(() -> sendVoiceChunks(client.player.getGameProfile().getName(), pcm, true));
+                }
+            } else {
+                String speakingMsg = SimpleComVoiceClient.getSpeakingActionBarMessage();
+                if (speakingMsg != null && !speakingMsg.isEmpty()) {
+                    SimpleComVoiceClient.showActionBar(speakingMsg);
                 }
             }
         });
@@ -169,19 +192,23 @@ public final class ExampleModFabricClient implements ClientModInitializer {
         });
     }
 
-    private static void sendVoiceChunks(String username, short[] pcm) {
+    private static void sendVoiceChunks(String username, short[] pcm, boolean showDoneMessage) {
         if (SimpleComConfig.getChannel() == 0) return;
         try {
             String channel = String.valueOf(SimpleComConfig.getChannel());
-            VoiceSession session = new VoiceSession(username, channel);
+            boolean useCompression = HandshakePayloadAdapter.useCompressionEncoder();
+            boolean lowLatency = HandshakePayloadAdapter.lowLatency();
+            VoiceSession session = new VoiceSession(username, channel, useCompression, lowLatency);
             List<byte[]> chunks = session.encodeAndChunk(pcm);
             int totalBytes = 0;
             for (byte[] chunk : chunks) {
                 SimpleComVoiceClient.sendVoiceData(chunk);
                 totalBytes += chunk.length;
             }
-            int totalKb = (totalBytes + 512) / 1024;
-            SimpleComVoiceClient.showActionBar(String.format(SimpleComVoiceClient.MSG_RECORD_DONE, totalKb));
+            if (showDoneMessage) {
+                int totalKb = (totalBytes + 512) / 1024;
+                SimpleComVoiceClient.showActionBar(String.format(SimpleComVoiceClient.MSG_RECORD_DONE, totalKb));
+            }
         } catch (IOException e) {
             LOGGER.warn("[SimpleCom] 编码语音失败", e);
         }
@@ -195,7 +222,7 @@ public final class ExampleModFabricClient implements ClientModInitializer {
             if (packet != null) {
                 String speaker = assembler.feed(packet);
                 if (speaker != null) {
-                    SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.getSpeakingMessage(speaker));
+                    SimpleComVoiceClient.reportSpeaking(speaker);
                 }
             }
         } catch (IOException e) {

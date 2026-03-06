@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    // TODO: 接入 Opus 编解码（如 Concentus），当前使用 PCM 透传
+    implementation 'io.github.jaredmdobson:concentus:1.0.2'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

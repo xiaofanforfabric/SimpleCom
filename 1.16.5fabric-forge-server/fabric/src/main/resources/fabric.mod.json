@@ -2,24 +2,21 @@
   "schemaVersion": 1,
   "id": "simplecom",
   "version": "${version}",
-  "name": "SimpleCom",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "SimpleCom Server",
+  "description": "SimpleCom 服务端模组，提供语音通信与信道切换功能。配合 SimpleCom 客户端模组使用，支持 Fabric 1.16.5 服务端。",
   "authors": [
-    "Me!"
+    "xiaofan"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/xiaofanforfabric/SimpleCom",
+    "sources": "https://github.com/xiaofanforfabric/SimpleCom"
   },
   "license": "CC0-1.0",
   "icon": "assets/simplecom/icon.png",
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
       "com.xiaofan.server.fabric.ExampleModFabric"
-    ],
-    "client": [
-      "com.xiaofan.server.fabric.client.ExampleModFabricClient"
     ]
   },
   "mixins": [
@@ -31,8 +28,5 @@
     "java": ">=8",
     "architectury": ">=1.32.68",
     "fabric": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }

@@ -88,6 +88,28 @@ Traditional voice mods typically use **UDP** for real-time audio streaming. Howe
 
 ---
 
+## Version Compatibility / 版本兼容
+
+### English
+
+**Each release version is incompatible with other versions.** Client and server must use the same version.
+
+- **V1.1** server (mod or Bukkit plugin) only works with **V1.1** client.
+- **V0.1** server only worked with **V1.0** client.
+
+Do not mix versions (e.g. V1.1 client on a V0.1 server will not work).
+
+### 中文
+
+**每个版本与其它版本不兼容。** 客户端与服务端必须使用相同版本。
+
+- **V1.1** 服务端（模组或 Bukkit 插件）仅兼容 **V1.1** 客户端。
+- **V0.1** 服务端仅兼容 **V1.0** 客户端。
+
+请勿混用版本（例如 V1.1 客户端连接 V0.1 服务端将无法正常工作）。
+
+---
+
 ## Project Structure / 项目结构
 
 ### English
@@ -127,8 +149,8 @@ SimpleCom/
 ```bash
 cd 1.16.5forge-fabric
 ./gradlew build
-# Output: forge/build/libs/simplecom-forge-1.0.0.jar, fabric/build/libs/simplecom-fabric-1.0.0.jar
-# Or run mergeJars for a single merged JAR: build/libs/simplecom-1.0.0-merged.jar
+# Output: forge/build/libs/simplecom-forge-1.1.jar, fabric/build/libs/simplecom-fabric-1.1.jar
+# Or run mergeJars for a single merged JAR: build/libs/simplecom-1.1-merged.jar
 ```
 
 > Note: The root task `build1.16.5client` may have issues; prefer building from within the project directory.
@@ -140,8 +162,8 @@ cd 1.16.5forge-fabric
 ```bash
 cd 1.16.5forge-fabric
 ./gradlew build
-# 输出：forge/build/libs/simplecom-forge-1.0.0.jar、fabric/build/libs/simplecom-fabric-1.0.0.jar
-# 或执行 mergeJars 得到合并 JAR：build/libs/simplecom-1.0.0-merged.jar
+# 输出：forge/build/libs/simplecom-forge-1.1.jar、fabric/build/libs/simplecom-fabric-1.1.jar
+# 或执行 mergeJars 得到合并 JAR：build/libs/simplecom-1.1-merged.jar
 ```
 
 > 说明：根目录的 `build1.16.5client` 任务可能存在问题，建议在项目目录内构建。
@@ -152,12 +174,12 @@ cd 1.16.5forge-fabric
 
 ### English
 
-1. **Client**: Place `simplecom-1.0.0.jar` in `.minecraft/mods/` (requires Architectury)
+1. **Client**: Place `simplecom-1.1.jar` in `.minecraft/mods/` (requires Architectury)
 2. **Server**: Install the Bukkit/Spigot plugin on your server
 
 ### 中文
 
-1. **客户端**：将 `simplecom-1.0.0.jar` 放入 `.minecraft/mods/`（需安装 Architectury）
+1. **客户端**：将 `simplecom-1.1.jar` 放入 `.minecraft/mods/`（需安装 Architectury）
 2. **服务端**：在服务器上安装 Bukkit/Spigot 插件
 
 ---
@@ -178,7 +200,10 @@ Thank you for your support.
 
 ### 中文
 
-**微信 / 支付宝：** 占位，后续会上传收款二维码。
+**微信 / 支付宝：** 
+<img width="943" height="943" alt="mm_reward_qrcode_1771753353154" src="https://github.com/user-attachments/assets/f3feb475-ca97-4678-a1b7-47e5abeadda4" />
+![1767020347650](https://github.com/user-attachments/assets/7c1fcbae-6a37-46e1-ab6d-90c2601bf0e6)
+
 
 感谢支持。
 

@@ -40,6 +40,8 @@ dependencies {
     implementation project(':clientcommen')
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
     shadowBundle project(':clientcommen')
+    // Opus 编码依赖，必须打进 mod 否则运行时 ClassNotFoundException
+    shadowBundle 'io.github.jaredmdobson:concentus:1.0.2'
 }
 
 processResources {

@@ -5,6 +5,11 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 语音对讲：按键按住录音，松开发送
  * 物品栏上方显示：正在录音 / 正在对讲
@@ -15,6 +20,15 @@ public final class SimpleComVoiceClient {
     public static final String MSG_RECORDING = "正在录音...";
     public static final String MSG_RECORD_DONE = "录音完成，共%dKB";
     public static final String MSG_SPEAKING = "%s正在对讲";
+    /** 多人同时讲话时物品栏文案后缀 */
+    public static final String MSG_SPEAKING_MULTI_SUFFIX = " 正在对讲";
+    /** 当前正在对讲的玩家视为持续时长（毫秒） */
+    private static final long SPEAKING_DURATION_MS = 2500;
+    /** 物品栏最多显示几名玩家，超出用 ... */
+    private static final int MAX_SPEAKING_NAMES = 5;
+
+    /** 玩家名 -> 视为“正在对讲”的截止时间 */
+    private static final Map<String, Long> speakingUntil = new ConcurrentHashMap<>();
 
     private static final String MSG_CONNECT_SUCCESS = "[简单的通讯器]：§a服务器握手成功，服务器类型：%s，按住 %s 录音";
 
@@ -110,8 +124,50 @@ public final class SimpleComVoiceClient {
         return String.format(MSG_CONNECT_SUCCESS, serverType != null && !serverType.isEmpty() ? serverType : "未知", getVoiceKeyDisplayName());
     }
 
+    /** 握手成功后根据服务端是否启用压缩，返回聊天栏提示文案 */
+    public static String getCompressionStatusMessage(boolean useCompressionEncoder) {
+        return useCompressionEncoder
+                ? "[简单的通讯器]：服务端启用了压缩编码器，这可以减少流量带宽，同时也会带来一些声音问题"
+                : "[简单的通讯器]：服务端采用直接转发，这保证了音质，但同时会占用较高的流量带宽";
+    }
+
+    /** 握手成功后根据服务端是否启用低延迟，返回聊天栏提示文案 */
+    public static String getLowLatencyStatusMessage(boolean lowLatency) {
+        return lowLatency
+                ? "[简单的通讯器]：服务端启用了低延迟通信，可能会导致声音卡顿，视网络情况而定，如有问题请联系服务器管理员"
+                : "[简单的通讯器]：服务端采用原版通信模式。";
+    }
+
     public static String getSpeakingMessage(String username) {
         return String.format(MSG_SPEAKING, username);
+    }
+
+    /** 收到某玩家的语音包时调用，用于多人对讲列表 */
+    public static void reportSpeaking(String username) {
+        if (username == null || username.isEmpty()) return;
+        speakingUntil.put(username, System.currentTimeMillis() + SPEAKING_DURATION_MS);
+    }
+
+    /** 取当前正在对讲的玩家列表文案，如 "张三，李四，王五... 正在对讲"，无人在讲则返回空字符串 */
+    public static String getSpeakingActionBarMessage() {
+        long now = System.currentTimeMillis();
+        List<String> names = new ArrayList<>();
+        for (Map.Entry<String, Long> e : speakingUntil.entrySet()) {
+            if (e.getValue() > now) {
+                names.add(e.getKey());
+            }
+        }
+        speakingUntil.entrySet().removeIf(e -> e.getValue() <= now);
+        if (names.isEmpty()) return "";
+        int show = Math.min(names.size(), MAX_SPEAKING_NAMES);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < show; i++) {
+            if (i > 0) sb.append("，");
+            sb.append(names.get(i));
+        }
+        if (names.size() > MAX_SPEAKING_NAMES) sb.append("...");
+        sb.append(MSG_SPEAKING_MULTI_SUFFIX);
+        return sb.toString();
     }
 
     private static String getVoiceKeyDisplayName() {

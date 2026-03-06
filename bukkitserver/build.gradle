@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.xiaofan'
-version = 'v0.1'
+version = '1.1'
 
 repositories {
     mavenCentral()

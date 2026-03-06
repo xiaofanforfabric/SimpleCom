@@ -1,5 +1,6 @@
 package com.xiaofan.server.forge;
 
+import com.xiaofan.server.SimpleComServerConfig;
 import com.xiaofan.server.payload.SimpleComChannels;
 import com.xiaofan.server.payload.ServerPayloadHandler;
 import com.xiaofan.server.payload.VarIntUtil;
@@ -28,7 +29,18 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
 
     private static final Logger LOGGER = LogManager.getLogger("SimpleCom-Server");
     private static final String PROTOCOL = "1";
+    private final SimpleComServerConfig config;
     private final Map<UUID, int[]> handshakeTasks = new HashMap<>();
+
+    public ServerPayloadHandlerForge() {
+        this.config = SimpleComServerConfig.load(
+                net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get(),
+                "forge"
+        );
+        LOGGER.info("[SimpleCom] 已启用，使用 payload 通道传输数据，压缩编码器：{}，低延迟：{}",
+                config.isUseCompressionEncoder() ? "启用" : "关闭",
+                config.isLowLatency() ? "开启" : "关闭");
+    }
 
     public void register() {
         // 服务端发送的通道也需注册，否则 Forge 连接握手会因版本校验失败而断开
@@ -106,7 +118,13 @@ public final class ServerPayloadHandlerForge extends ServerPayloadHandler {
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerId);
         if (player == null || !player.networkHandler.getConnection().isOpen()) return;
         try {
-            byte[] data = buildHandshakePayload("1.0.0", "SimpleCom-Server", "forge");
+            byte[] data = buildHandshakePayload(
+                    config.getVersion(),
+                    config.getName(),
+                    config.getServerType(),
+                    config.isUseCompressionEncoder(),
+                    config.isLowLatency()
+            );
             sendToPlayer(playerId, SimpleComChannels.HANDSHAKE, data);
             LOGGER.info("[SimpleCom] 发送握手 #{} 给 {}", count + 1, getPlayerName(playerId));
         } catch (IOException e) {

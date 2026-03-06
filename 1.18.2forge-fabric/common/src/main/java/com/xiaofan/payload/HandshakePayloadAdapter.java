@@ -21,10 +21,14 @@ public final class HandshakePayloadAdapter {
     private static volatile String serverPluginVersion = "";
     private static volatile String serverPluginName = "";
     private static volatile String serverType = "";
+    /** Use a compression encoder: when true, client sends Opus (64 kbps), still 30KB chunks */
+    private static volatile boolean useCompressionEncoder = false;
+    /** Low latency: when true, client sends 2KB chunks immediately and plays received packets immediately */
+    private static volatile boolean lowLatency = false;
 
     /**
      * 从 PacketByteBuf 解析握手 payload（Fabric 用，buffer 含完整 payload）
-     * 格式：[discriminator 0][protocol 1][VarInt+UTF8 version][VarInt+UTF8 name][VarInt+UTF8 serverType]
+     * 格式：[discriminator 0][protocol 1][VarInt+UTF8 version][VarInt+UTF8 name][VarInt+UTF8 serverType][byte useCompressionEncoder 0/1][byte lowLatency 0/1]
      */
     public static HandshakeData parse(PacketByteBuf buf) {
         buf.readByte(); // discriminator
@@ -32,7 +36,9 @@ public final class HandshakePayloadAdapter {
         String version = readVarIntString(buf);
         String name = readVarIntString(buf);
         String serverType = buf.readableBytes() > 0 ? readVarIntString(buf) : "";
-        return new HandshakeData(protocolVersion, version, name, serverType);
+        boolean useCompression = buf.readableBytes() > 0 && buf.readByte() != 0;
+        boolean lowLat = buf.readableBytes() > 0 && buf.readByte() != 0;
+        return new HandshakeData(protocolVersion, version, name, serverType, useCompression, lowLat);
     }
 
     /**
@@ -43,7 +49,9 @@ public final class HandshakePayloadAdapter {
         String version = readVarIntString(buf);
         String name = readVarIntString(buf);
         String serverType = buf.readableBytes() > 0 ? readVarIntString(buf) : "";
-        return new HandshakeData(protocolVersion, version, name, serverType);
+        boolean useCompression = buf.readableBytes() > 0 && buf.readByte() != 0;
+        boolean lowLat = buf.readableBytes() > 0 && buf.readByte() != 0;
+        return new HandshakeData(protocolVersion, version, name, serverType, useCompression, lowLat);
     }
 
     /** 按 Minecraft PacketByteBuf 格式读取：VarInt 长度 + UTF-8 字节 */
@@ -71,6 +79,8 @@ public final class HandshakePayloadAdapter {
         serverPluginVersion = data.version;
         serverPluginName = data.name;
         serverType = data.serverType != null ? data.serverType : "";
+        useCompressionEncoder = data.useCompressionEncoder;
+        lowLatency = data.lowLatency;
     }
 
     public static void reset() {
@@ -78,6 +88,8 @@ public final class HandshakePayloadAdapter {
         serverPluginVersion = "";
         serverPluginName = "";
         serverType = "";
+        useCompressionEncoder = false;
+        lowLatency = false;
     }
 
     public static boolean hasServerPlugin() {
@@ -96,17 +108,31 @@ public final class HandshakePayloadAdapter {
         return serverType;
     }
 
+    /** Use a compression encoder: when true, client uses Opus (64 kbps), 30KB chunks; receive decode and play. */
+    public static boolean useCompressionEncoder() {
+        return useCompressionEncoder;
+    }
+
+    /** Low latency: when true, client sends 2KB chunks immediately and plays each received packet immediately. */
+    public static boolean lowLatency() {
+        return lowLatency;
+    }
+
     public static final class HandshakeData {
         public final byte protocolVersion;
         public final String version;
         public final String name;
         public final String serverType;
+        public final boolean useCompressionEncoder;
+        public final boolean lowLatency;
 
-        public HandshakeData(byte protocolVersion, String version, String name, String serverType) {
+        public HandshakeData(byte protocolVersion, String version, String name, String serverType, boolean useCompressionEncoder, boolean lowLatency) {
             this.protocolVersion = protocolVersion;
             this.version = version;
             this.name = name != null ? name : "";
             this.serverType = serverType != null ? serverType : "";
+            this.useCompressionEncoder = useCompressionEncoder;
+            this.lowLatency = lowLatency;
         }
     }
 }

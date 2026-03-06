@@ -123,14 +123,21 @@ public final class HandshakePayloadReceiver {
                 (msg, ctx) -> ctx.get().setPacketHandled(true)
         );
         VOICE_CHANNEL.addListener(event -> {
-            PacketByteBuf buf = event.getPayload();
+            PacketByteBuf buf = event != null ? event.getPayload() : null;
+            if (buf == null) return;
+            NetworkEvent.Context ctx = event.getSource() != null ? event.getSource().get() : null;
+            if (ctx == null) return;
             byte[] data = new byte[buf.readableBytes()];
             buf.readBytes(data);
-            event.getSource().get().enqueueWork(() -> onVoiceDataReceived(data));
-            event.getSource().get().setPacketHandled(true);
+            ctx.enqueueWork(() -> onVoiceDataReceived(data));
+            ctx.setPacketHandled(true);
         });
         CHANNEL_SWITCH_ACK_CHANNEL.addListener(event -> {
+            if (event == null) return;
             PacketByteBuf buf = event.getPayload();
+            if (buf == null) return;
+            NetworkEvent.Context ctx = event.getSource() != null ? event.getSource().get() : null;
+            if (ctx == null) return;
             int ch = 1;
             if (buf.readableBytes() > 0) {
                 try {
@@ -139,13 +146,13 @@ public final class HandshakePayloadReceiver {
                 }
             }
             int finalCh = ch;
-            event.getSource().get().enqueueWork(() -> {
+            ctx.enqueueWork(() -> {
                 ClientPlayerEntity p = MinecraftClient.getInstance().player;
                 if (p != null) {
                     p.sendMessage(new LiteralText("信道已成功切换到" + finalCh), false);
                 }
             });
-            event.getSource().get().setPacketHandled(true);
+            ctx.setPacketHandled(true);
         });
     }
 
@@ -159,12 +166,16 @@ public final class HandshakePayloadReceiver {
         private final String version;
         private final String name;
         private final String serverType;
+        private final boolean useCompressionEncoder;
+        private final boolean lowLatency;
 
-        public HandshakeMessage(byte protocolVersion, String version, String name, String serverType) {
+        public HandshakeMessage(byte protocolVersion, String version, String name, String serverType, boolean useCompressionEncoder, boolean lowLatency) {
             this.protocolVersion = protocolVersion;
             this.version = version;
             this.name = name;
             this.serverType = serverType;
+            this.useCompressionEncoder = useCompressionEncoder;
+            this.lowLatency = lowLatency;
         }
 
         public static void encode(HandshakeMessage msg, PacketByteBuf buf) {
@@ -176,31 +187,39 @@ public final class HandshakePayloadReceiver {
 
         public static HandshakeMessage decode(PacketByteBuf buf) {
             HandshakePayloadAdapter.HandshakeData data = HandshakePayloadAdapter.parseFromProtocol(buf);
-            return new HandshakeMessage(data.protocolVersion, data.version, data.name, data.serverType);
+            return new HandshakeMessage(data.protocolVersion, data.version, data.name, data.serverType, data.useCompressionEncoder, data.lowLatency);
         }
 
         public static void handle(HandshakeMessage msg, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
+            NetworkEvent.Context context = ctx != null ? ctx.get() : null;
+            if (context == null) return;
+            context.enqueueWork(() -> {
                 try {
                     cancelHandshakeTimeout();
                     HandshakePayloadAdapter.onHandshakeReceived(
-                            new HandshakePayloadAdapter.HandshakeData(msg.protocolVersion, msg.version, msg.name, msg.serverType));
-                    LOGGER.info("[SimpleCom] 收到服务端握手: {} v{}", msg.name, msg.version);
+                            new HandshakePayloadAdapter.HandshakeData(msg.protocolVersion, msg.version, msg.name, msg.serverType, msg.useCompressionEncoder, msg.lowLatency));
+                    forgeAssembler.setUseCompressionEncoder(msg.useCompressionEncoder);
+                    forgeAssembler.setLowLatency(msg.lowLatency);
+                    LOGGER.info("[SimpleCom] 收到服务端握手: {} v{} (compression={}, lowLatency={})", msg.name, msg.version, msg.useCompressionEncoder, msg.lowLatency);
                     ClientPlayerEntity player = MinecraftClient.getInstance().player;
                     if (player != null) {
                         player.sendMessage(new LiteralText(SimpleComVoiceClient.getConnectSuccessMessage(msg.serverType)), false);
+                        player.sendMessage(new LiteralText(SimpleComVoiceClient.getCompressionStatusMessage(msg.useCompressionEncoder)), false);
+                        player.sendMessage(new LiteralText(SimpleComVoiceClient.getLowLatencyStatusMessage(msg.lowLatency)), false);
                         ACK_CHANNEL.sendToServer(new HandshakeAckMessage(SimpleComConfig.getChannel()));
                     }
                 } catch (Exception e) {
                     LOGGER.error("[SimpleCom] 处理握手失败", e);
                 }
             });
-            ctx.get().setPacketHandled(true);
+            context.setPacketHandled(true);
         }
     }
 
     private static final com.xiaofan.voice.VoiceRecorder forgeRecorder = new com.xiaofan.voice.VoiceRecorder();
     private static final com.xiaofan.voice.VoicePacketAssembler forgeAssembler = new com.xiaofan.voice.VoicePacketAssembler();
+    private static final int LOW_LATENCY_DRAIN_MS = 40;
+    private static long lastLowLatencyDrainTime = 0;
 
     public static void tickVoiceKey() {
         net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
@@ -217,32 +236,54 @@ public final class HandshakePayloadReceiver {
 
         if (held && !forgeRecorder.isRecording()) {
             forgeRecorder.start();
+            lastLowLatencyDrainTime = System.currentTimeMillis();
             SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.MSG_RECORDING);
         } else if (held) {
             SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.MSG_RECORDING);
+            if (com.xiaofan.payload.HandshakePayloadAdapter.lowLatency()) {
+                long now = System.currentTimeMillis();
+                if (now - lastLowLatencyDrainTime >= LOW_LATENCY_DRAIN_MS) {
+                    lastLowLatencyDrainTime = now;
+                    short[] pcm = forgeRecorder.drainRecorded();
+                    if (pcm != null && pcm.length > 0) {
+                        net.minecraft.client.MinecraftClient client = mc;
+                        String name = client.player.getGameProfile().getName();
+                        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> sendVoiceChunks(client, name, pcm, false));
+                    }
+                }
+            }
         } else if (!held && forgeRecorder.isRecording()) {
             short[] pcm = forgeRecorder.stop();
             if (pcm != null && pcm.length > 0) {
                 net.minecraft.client.MinecraftClient client = mc;
-                java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> sendVoiceChunks(client, client.player.getGameProfile().getName(), pcm));
+                java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> sendVoiceChunks(client, client.player.getGameProfile().getName(), pcm, true));
+            }
+        } else {
+            String speakingMsg = SimpleComVoiceClient.getSpeakingActionBarMessage();
+            if (speakingMsg != null && !speakingMsg.isEmpty()) {
+                SimpleComVoiceClient.showActionBar(speakingMsg);
             }
         }
     }
 
-    private static void sendVoiceChunks(net.minecraft.client.MinecraftClient client, String username, short[] pcm) {
+    private static void sendVoiceChunks(net.minecraft.client.MinecraftClient client, String username, short[] pcm, boolean showDoneMessage) {
         if (SimpleComConfig.getChannel() == 0) return;
         try {
             String channel = String.valueOf(SimpleComConfig.getChannel());
-            com.xiaofan.voice.VoiceSession session = new com.xiaofan.voice.VoiceSession(username, channel);
+            boolean useCompression = HandshakePayloadAdapter.useCompressionEncoder();
+            boolean lowLatency = HandshakePayloadAdapter.lowLatency();
+            com.xiaofan.voice.VoiceSession session = new com.xiaofan.voice.VoiceSession(username, channel, useCompression, lowLatency);
             java.util.List<byte[]> chunks = session.encodeAndChunk(pcm);
             int totalBytes = 0;
             for (byte[] chunk : chunks) {
                 SimpleComVoiceClient.sendVoiceData(chunk);
                 totalBytes += chunk.length;
             }
-            int totalKb = (totalBytes + 512) / 1024;
-            String msg = String.format(SimpleComVoiceClient.MSG_RECORD_DONE, totalKb);
-            client.execute(() -> SimpleComVoiceClient.showActionBar(msg));
+            if (showDoneMessage) {
+                int totalKb = (totalBytes + 512) / 1024;
+                String msg = String.format(SimpleComVoiceClient.MSG_RECORD_DONE, totalKb);
+                client.execute(() -> SimpleComVoiceClient.showActionBar(msg));
+            }
         } catch (java.io.IOException e) {
             LOGGER.warn("[SimpleCom] 编码语音失败", e);
         }
@@ -256,7 +297,7 @@ public final class HandshakePayloadReceiver {
             if (packet != null) {
                 String speaker = forgeAssembler.feed(packet);
                 if (speaker != null) {
-                    SimpleComVoiceClient.showActionBar(SimpleComVoiceClient.getSpeakingMessage(speaker));
+                    SimpleComVoiceClient.reportSpeaking(speaker);
                 }
             }
         } catch (java.io.IOException e) {

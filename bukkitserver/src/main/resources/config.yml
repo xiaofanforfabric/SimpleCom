@@ -1,2 +1,12 @@
 # SimpleCom 配置
 # 数据通过 Minecraft 插件 payload 通道传输，无需额外端口
+
+# Use a compression encoder = false / true
+# 使用压缩编码器：开启后可显著降低网络带宽占用；可能带来声音发闷、失真等现象，此为编码器压缩所致。我们不受理任何关于“声音奇怪”等问题的 issue。
+# Using a compression encoder reduces bandwidth usage; it may cause odd or distorted sound due to compression artifacts. We do not accept issues about sound quality when compression is enabled.
+use_compression_encoder: false
+
+# Low latency = false / true
+# 低延迟：实验性选项。若追求实时语音可开启，可能造成音频卡顿（视网络而定）。我们不受理任何有关此选项的 issue，因其违背我们初衷。
+# Low latency: experimental. May reduce delay for real-time voice but can cause stutter depending on network. We do not accept issues about this option.
+low_latency: false

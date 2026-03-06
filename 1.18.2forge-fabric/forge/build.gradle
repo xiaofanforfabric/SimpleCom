@@ -41,8 +41,10 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     implementation project(':clientcommen')
+    implementation 'io.github.jaredmdobson:concentus:1.0.2'
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
     shadowBundle project(':clientcommen')
+    shadowBundle 'io.github.jaredmdobson:concentus:1.0.2'
 }
 
 processResources {

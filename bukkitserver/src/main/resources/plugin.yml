@@ -1,5 +1,5 @@
 name: bukkitserver
-version: 'v0.1'
+version: '1.1'
 main: com.xiaofan.bukkitserver.Bukkitserver
 api-version: '1.13'
 load: STARTUP

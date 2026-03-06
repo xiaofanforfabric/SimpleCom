@@ -46,6 +46,8 @@ public final class Bukkitserver extends JavaPlugin {
         Bukkit.getMessenger().registerIncomingPluginChannel(this, SimpleComChannels.CHANNEL_SWITCH, (ch, player, message) -> payloadChannelHandler.onChannelSwitch(player, message));
 
         Bukkit.getPluginManager().registerEvents(playerJoinListener, this);
-        getLogger().info("[SimpleCom] 已启用，使用 payload 通道传输数据");
+        boolean compression = getConfig().getBoolean("use_compression_encoder", false);
+        boolean lowLatency = getConfig().getBoolean("low_latency", false);
+        getLogger().info("[SimpleCom] 已启用，使用 payload 通道传输数据，压缩编码器：" + (compression ? "启用" : "关闭") + "，低延迟：" + (lowLatency ? "开启" : "关闭"));
     }
 }

@@ -1,15 +1,16 @@
 modLoader = "javafml"
 loaderVersion = "[36,)"
 #issueTrackerURL = ""
-license = "Insert License Here"
+license = "CC0-1.0"
 
 [[mods]]
 modId = "simplecom"
 version = "${version}"
-displayName = "SimpleCom"
-authors = "Me!"
+displayName = "SimpleCom Server"
+authors = "xiaofan"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+SimpleCom 服务端模组，提供语音通信与信道切换功能。
+配合 SimpleCom 客户端模组使用，支持 Forge/Fabric 1.16.5 服务端。
 '''
 #logoFile = ""
 
