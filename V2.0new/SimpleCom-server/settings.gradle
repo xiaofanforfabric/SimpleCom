@@ -1,0 +1,3 @@
+rootProject.name = 'SimpleCom-server'
+include 'SimpleCom-server-core'
+project(':SimpleCom-server-core').projectDir = file('../SimpleCom-server-core')

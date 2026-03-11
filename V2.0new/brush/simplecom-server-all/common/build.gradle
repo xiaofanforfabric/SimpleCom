@@ -1,0 +1,16 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    // 服务器核心模块（配置、代理、WebSocket、验证码等），打包进模组
+    implementation project(':SimpleCom-server-core')
+    implementation 'org.yaml:snakeyaml:2.2'
+}

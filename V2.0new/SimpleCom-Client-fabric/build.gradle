@@ -1,0 +1,123 @@
+plugins {
+    id 'fabric-loom' version '1.15-SNAPSHOT'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "simplecom-client-fabric" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // SimpleCom-core（嵌套进 mod JAR）| Bundle SimpleCom-core as nested JAR
+    include implementation(project(':SimpleCom-core'))
+
+    // Opus 音频编解码器（纯 Java 实现）
+    include implementation('io.github.jaredmdobson:concentus:1.0.2')
+
+    // JavaFX 17 — 全平台 native JAR 也一起嵌入，运行时 Fabric Loader 自动加载
+    // JavaFX 17 — include all platform JARs so Fabric Loader loads them at runtime
+    def javafxVersion = '17.0.6'
+    // MP3 播放（JLayer 直接解码，不依赖 SPI）
+    include implementation('javazoom:jlayer:1.0.1')
+
+    // 全局热键（JNA 轮询，不依赖 Fabric/Mixin）
+    include implementation('net.java.dev.jna:jna:5.14.0')
+
+    ['javafx-base', 'javafx-controls', 'javafx-graphics'].each { mod ->
+        include implementation("org.openjfx:${mod}:${javafxVersion}")
+        include implementation("org.openjfx:${mod}:${javafxVersion}:win")
+        include implementation("org.openjfx:${mod}:${javafxVersion}:linux")
+        include implementation("org.openjfx:${mod}:${javafxVersion}:mac")
+    }
+
+    // WebSocket 客户端 | WebSocket client library
+    include implementation('org.java-websocket:Java-WebSocket:1.5.7')
+
+    // Java-WebSocket 1.5.7 在初始化时依赖 SLF4J，Fabric 环境下需显式打包否则 NoClassDefFoundError: LoggerFactory
+    // Java-WebSocket 1.5.7 requires SLF4J at init; bundle explicitly to avoid NoClassDefFoundError in Fabric
+    include implementation('org.slf4j:slf4j-api:2.0.9')
+    include implementation('org.slf4j:slf4j-nop:2.0.9')
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
+    }
+}
+
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release.set(targetJavaVersion)
+    }
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archives_base_name}"}
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
+}

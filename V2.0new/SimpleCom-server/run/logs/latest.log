@@ -1,0 +1,73 @@
+[08:50:34] [main/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[08:50:35] [main/INFO]: Found new data pack file/bukkit, loading it automatically
+[08:50:35] [main/INFO]: Reloading ResourceManager: Default, bukkit
+[08:50:35] [Worker-Main-4/INFO]: Loaded 7 recipes
+[08:50:37] [Server thread/INFO]: Starting minecraft server version 1.16.5
+[08:50:37] [Server thread/INFO]: Loading properties
+[08:50:37] [Server thread/INFO]: This server is running Paper version git-Paper-794 (MC: 1.16.5) (Implementing API version 1.16.5-R0.1-SNAPSHOT)
+[08:50:37] [Server thread/INFO]: Debug logging is disabled
+[08:50:37] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[08:50:37] [Server thread/INFO]: Using 4 threads for Netty based IO
+[08:50:37] [Server thread/INFO]: Default game type: SURVIVAL
+[08:50:37] [Server thread/INFO]: Generating keypair
+[08:50:37] [Server thread/INFO]: Starting Minecraft server on *:25565
+[08:50:37] [Server thread/INFO]: Using default channel type
+[08:50:40] [Server thread/INFO]: [SimpleCom-server] Loading SimpleCom-server v1.0
+[08:50:40] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[08:50:40] [Server thread/INFO]: [SimpleCom-server] Enabling SimpleCom-server v1.0
+[08:50:40] [Server thread/INFO]: SimpleCom Server Core 1.0-SNAPSHOT initialized!
+[08:50:40] [Server thread/INFO]: SimpleCom Server Core 1.0-SNAPSHOT 加载完毕!
+[08:50:40] [Server thread/INFO]: [SimpleCom-server] [SimpleCom] 端口复用代理已启动 | Port multiplex proxy started: 0.0.0.0:25566 -> MC 后端 127.0.0.1:25565 | MC backend
+[08:50:40] [Server thread/INFO]: [SimpleCom-server] 简单的通讯器插件加载完毕 | SimpleCom plugin loaded.
+[08:50:40] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[08:50:40] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[08:50:40] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[08:50:40] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[08:50:40] [Server thread/INFO]: Preparing level "world"
+[08:50:43] [Server thread/WARN]: Unable to find spawn biome
+[08:50:44] [Server thread/WARN]: Unable to find spawn biome
+[08:50:45] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[08:50:46] [Server thread/INFO]: Time elapsed: 722 ms
+[08:50:46] [Server thread/INFO]: Preparing start region for dimension minecraft:the_nether
+[08:50:46] [Worker-Main-5/INFO]: Preparing spawn area: 0%
+[08:50:46] [Worker-Main-5/INFO]: Preparing spawn area: 0%
+[08:50:47] [Worker-Main-5/INFO]: Preparing spawn area: 0%
+[08:50:47] [Server thread/INFO]: Time elapsed: 1359 ms
+[08:50:47] [Server thread/INFO]: Preparing start region for dimension minecraft:the_end
+[08:50:47] [Worker-Main-6/INFO]: Preparing spawn area: 0%
+[08:50:47] [Server thread/INFO]: Time elapsed: 433 ms
+[08:50:47] [Server thread/INFO]: Running delayed init tasks
+[08:50:47] [Server thread/INFO]: Done (10.832s)! For help, type "help"
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] ************************************************************
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * WARNING - YOU ARE RUNNING AN OUTDATED VERSION OF JAVA.
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * PAPER WILL STOP BEING COMPATIBLE WITH THIS VERSION OF
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * JAVA WHEN MINECRAFT 1.17 IS RELEASED.
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] *
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * Please update the version of Java you use to run Paper
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * to at least Java 16. When Paper for Minecraft 1.17 is
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * released support for versions of Java before 16 will
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * be dropped.
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] *
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * Current Java version: 1.8.0_472
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] *
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] * Check this forum post for more information: 
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] *   https://papermc.io/java16
+[08:50:47] [Server thread/WARN]: [io.papermc.paper.util.PaperJvmChecker] ************************************************************
+[08:50:47] [Server thread/INFO]: Timings Reset
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] ========== SimpleCom ==========
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] 服务器启动完毕 | Server started.
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] 连接 25566 端口（代理）来享受游戏，游戏端口 25565，语音服务器端口 25566
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] Connect to port 25566 (proxy) to play. Game port 25565, Voice port 25566
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] 注意：代理是语音服务器和MC共用流量通道，解决单端口问题
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] Note: Proxy shares one port for voice and MC, solving single-port limitation.
+[08:50:49] [Server thread/INFO]: [SimpleCom-server] =================================
+[08:52:04] [User Authenticator #1/INFO]: UUID of player xiaofanforMC is 361356b4-4d2c-31c8-bd2d-ecc7ca0808af
+[08:52:04] [Server thread/INFO]: xiaofanforMC joined the game
+[08:52:05] [Server thread/INFO]: xiaofanforMC[/127.0.0.1:65473] logged in with entity id 375 at ([world]-203.5, 64.0, 78.5)
+[08:52:11] [Server thread/INFO]: xiaofanforMC lost connection: Disconnected
+[08:52:11] [Server thread/INFO]: xiaofanforMC left the game
+[08:56:30] [User Authenticator #2/INFO]: UUID of player xiaofanforMC is 361356b4-4d2c-31c8-bd2d-ecc7ca0808af
+[08:56:30] [Server thread/INFO]: xiaofanforMC joined the game
+[08:56:30] [Server thread/INFO]: xiaofanforMC[/127.0.0.1:49942] logged in with entity id 508 at ([world]-203.5, 64.0, 78.5)
+[08:57:37] [Server thread/INFO]: xiaofanforMC lost connection: Disconnected
+[08:57:37] [Server thread/INFO]: xiaofanforMC left the game

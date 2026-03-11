@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "simplecom_server_all_1_20_1",
+  "version": "${version}",
+  "name": "simpleCom-server-all-1.20.1",
+  "description": "简单的通讯器服务端",
+  "authors": ["xiaofan"],
+  "contact": {
+    "homepage": ""  },
+  "license": "MIT",
+  "icon": "assets/simplecom_server_all_1_20_1/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.xiaofan.simplecomServerAll1_20_1.fabric.SimplecomServerAll1_20_1Fabric"
+    ],
+    "client": [
+      "com.xiaofan.simplecomServerAll1_20_1.fabric.client.SimplecomServerAll1_20_1FabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.20.1",
+    "java": ">=17"
+    ,"architectury": ">=9.2.14"
+    ,"fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

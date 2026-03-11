@@ -1,0 +1,16 @@
+pluginManagement {
+    repositories {
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://files.minecraftforge.net/maven/" }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'simplecom-server-all-1_20_1'
+
+include 'common'
+include 'fabric'
+include 'forge'
+include 'SimpleCom-server-core'
+project(':SimpleCom-server-core').projectDir = file('../SimpleCom-server-core')

@@ -1,0 +1,297 @@
+plugins {
+    id 'fabric-loom' version '1.15-SNAPSHOT'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+// 根据 Minecraft 版本选择源代码目录
+// 支持通过命令行参数 target_version 指定版本，否则使用 gradle.properties 中的版本
+// 必须在 Loom 插件配置之前设置 minecraft_version，因为 Loom 在配置阶段早期会读取它
+// 注意：Gradle 属性名不能包含点号，所以使用 target_version 而不是 target.version
+// 如果传递的是 target.version，需要特殊处理
+def targetVersion
+if (project.hasProperty('target_version')) {
+    targetVersion = project.target_version.toString()
+} else if (project.hasProperty('target.version')) {
+    // 处理 target.version 格式（如果用户错误地使用了点号）
+    targetVersion = project.findProperty('target.version').toString()
+} else {
+    targetVersion = project.minecraft_version.toString()
+}
+
+if (project.hasProperty('target_version') || project.hasProperty('target.version')) {
+    // 立即设置 minecraft_version，确保 Loom 能够正确读取
+    project.ext.minecraft_version = targetVersion
+}
+
+def targetLoaderVersion
+if (project.hasProperty('target_loader_version')) {
+    targetLoaderVersion = project.target_loader_version.toString()
+} else if (project.hasProperty('target.loader.version')) {
+    targetLoaderVersion = project.findProperty('target.loader.version').toString()
+} else {
+    targetLoaderVersion = project.loader_version.toString()
+}
+
+if (project.hasProperty('target_loader_version') || project.hasProperty('target.loader.version')) {
+    project.ext.loader_version = targetLoaderVersion
+}
+
+def minecraftVersion = targetVersion
+def sourceDir = "src/main/java"
+
+// 判断版本类型并选择对应的源代码目录
+if (minecraftVersion != null) {
+    if (minecraftVersion.startsWith("1.16")) {
+        sourceDir = "src/main/java-1.16"
+    } else if (minecraftVersion.startsWith("1.17")) {
+        sourceDir = "src/main/java-1.17"
+    } else if (minecraftVersion.startsWith("1.18")) {
+        sourceDir = "src/main/java-1.18"
+    } else if (minecraftVersion.startsWith("1.19")) {
+        sourceDir = "src/main/java-1.19"
+    } else if (minecraftVersion.startsWith("1.20")) {
+        sourceDir = "src/main/java-1.20"
+    } else if (minecraftVersion.startsWith("1.21")) {
+        sourceDir = "src/main/java-1.21"
+    }
+}
+
+// 配置源代码目录
+sourceSets {
+    main {
+        java {
+            srcDirs = [sourceDir, "src/main/java"] // 包含版本特定目录和通用目录
+        }
+    }
+}
+
+repositories {
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
+}
+
+dependencies {
+    // 使用之前设置的版本变量
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API（可选，但如果使用 ServerPlayConnectionEvents 则需要）
+    // modImplementation "net.fabricmc.fabric-api:fabric-api:0.42.0+1.16"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
+    }
+}
+
+def targetJavaVersion = 8
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release.set(targetJavaVersion)
+    }
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archives_base_name}"}
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
+}
+
+// ============================================================================
+// 版本化构建任务
+// ============================================================================
+
+/**
+ * 定义所有支持的版本及其配置
+ */
+def versionConfigs = [
+    "1.16.5": [sourceDir: "java-1.16", loader: "0.18.4"],
+    "1.17":   [sourceDir: "java-1.17", loader: "0.11.7"],
+    "1.17.1": [sourceDir: "java-1.17", loader: "0.11.7"],
+    "1.18":   [sourceDir: "java-1.18", loader: "0.12.12"],
+    "1.18.1": [sourceDir: "java-1.18", loader: "0.12.12"],
+    "1.18.2": [sourceDir: "java-1.18", loader: "0.13.3"],
+    "1.19":   [sourceDir: "java-1.19", loader: "0.14.10"],
+    "1.19.1": [sourceDir: "java-1.19", loader: "0.14.10"],
+    "1.19.2": [sourceDir: "java-1.19", loader: "0.14.21"],
+    "1.19.3": [sourceDir: "java-1.19", loader: "0.14.23"],
+    "1.19.4": [sourceDir: "java-1.19", loader: "0.14.25"],
+    "1.20":   [sourceDir: "java-1.20", loader: "0.14.22"],
+    "1.20.1": [sourceDir: "java-1.20", loader: "0.14.22"],
+    "1.20.2": [sourceDir: "java-1.20", loader: "0.14.24"],
+    "1.20.4": [sourceDir: "java-1.20", loader: "0.14.26"],
+    "1.20.6": [sourceDir: "java-1.20", loader: "0.15.7"],
+    "1.21":   [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.1": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.2": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.3": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.4": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.5": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.6": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.7": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.8": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.9": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.10": [sourceDir: "java-1.21", loader: "0.16.0"],
+    "1.21.11": [sourceDir: "java-1.21", loader: "0.16.0"]
+]
+
+/**
+ * 为每个版本创建构建任务
+ * 使用方法: gradlew build1165
+ * 
+ * 这些任务会启动新的 Gradle 进程并传递版本参数
+ */
+versionConfigs.each { version, config ->
+    def taskName = "build${version.replace('.', '')}"
+    def versionSourceDirPath = "src/main/${config.get('sourceDir')}"
+    
+    tasks.register(taskName, Exec) {
+        group = "versioned build"
+        description = "构建 Minecraft ${version} 版本的模组"
+        
+        // 查找 gradlew 脚本（使用绝对路径）
+        def gradlewScript = project.file("gradlew.bat")
+        if (!System.getProperty("os.name").toLowerCase().contains("win")) {
+            gradlewScript = project.file("gradlew")
+        }
+        
+        // 设置命令
+        // 注意：Gradle 属性值中的点号需要用引号包裹，或者使用环境变量
+        if (gradlewScript.exists()) {
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                commandLine "cmd", "/c", "\"${gradlewScript.absolutePath}\"", "build",
+                    "-Ptarget_version=\"${version}\"",
+                    "-Ptarget_loader_version=\"${config.get('loader')}\""
+            } else {
+                commandLine "bash", gradlewScript.absolutePath, "build",
+                    "-Ptarget_version=\"${version}\"",
+                    "-Ptarget_loader_version=\"${config.get('loader')}\""
+            }
+        } else {
+            // 使用系统 gradle
+            commandLine "gradle", "build",
+                "-Ptarget_version=\"${version}\"",
+                "-Ptarget_loader_version=\"${config.get('loader')}\""
+        }
+        
+        // 设置工作目录
+        workingDir = project.projectDir
+        
+        // 设置环境变量（如果需要）
+        environment = System.getenv()
+        
+        doFirst {
+            println "========================================"
+            println "构建 Minecraft ${version} 版本"
+            println "源代码目录: ${versionSourceDirPath}"
+            println "Fabric Loader: ${config.get('loader')}"
+            println "工作目录: ${workingDir}"
+            println "命令: ${commandLine.join(' ')}"
+            println "========================================"
+        }
+        
+        doLast {
+            println "========================================"
+            println "Minecraft ${version} 版本构建完成！"
+            println "========================================"
+        }
+    }
+}
+
+/**
+ * 创建构建所有版本的任务
+ */
+tasks.register('buildAllVersions') {
+    group = "versioned build"
+    description = "构建所有支持的版本"
+    
+    versionConfigs.each { version, config ->
+        def taskName = "build${version.replace('.', '')}"
+        dependsOn taskName
+    }
+    
+    doLast {
+        println "========================================"
+        println "所有版本构建完成！"
+        println "========================================"
+    }
+}
+
+/**
+ * 显示所有可用的版本构建任务
+ */
+tasks.register('listVersions') {
+    group = "versioned build"
+    description = "列出所有支持的版本"
+    
+    doLast {
+        println "========================================"
+        println "支持的 Minecraft 版本:"
+        println "========================================"
+        versionConfigs.each { version, config ->
+            def taskName = "build${version.replace('.', '')}"
+            println "  ${taskName.padRight(15)} - Minecraft ${version.padRight(8)} (Loader ${config.loader})"
+        }
+        println "========================================"
+        println "使用方法: gradlew build1165"
+        println "          gradlew build1171"
+        println "          gradlew build182"
+        println "          gradlew build192"
+        println "          ..."
+        println "          gradlew build21111"
+        println "========================================"
+    }
+}

@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.xiaofan'
+version = 'V2.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+}
+
+dependencies {
+    // 使用 1.16.5 API 编译，兼容 1.16.5–1.21.11（仅使用 1.16 已有 API 即可在更高版本运行）
+    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+    implementation project(':SimpleCom-server-core')
+}
+
+// 把 SimpleCom-server-core 打进插件 JAR，否则运行时 NoClassDefFoundError
+// 仅用 shadowJar 产出胖包 SimpleCom-server-V2.0.jar，禁用默认 jar 避免重复条目
+tasks.jar.enabled = false
+tasks.shadowJar {
+    archiveClassifier.set('')
+    archiveBaseName.set('SimpleCom-server')
+}
+tasks.build.dependsOn(tasks.shadowJar)
+
+tasks {
+  runServer {
+    minecraftVersion("1.16.5")
+  }
+}
+
+def targetJavaVersion = 8
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}

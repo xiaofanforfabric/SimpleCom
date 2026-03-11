@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "simplecom-server-all"
+version = "${version}"
+displayName = "SimpleCom-server-all"
+authors = "xiaofan"
+description = '''
+简单的通讯器模组服务端 | SimpleCom mod server side.
+'''
+#logoFile = ""
+
+[[dependencies.simplecom-server-all]]
+modId = "forge"
+mandatory = true
+versionRange = "[1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.simplecom-server-all]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.simplecom-server-all]]
+modId = "architectury"
+mandatory = true
+versionRange = "[1,)"
+ordering = "AFTER"
+side = "BOTH"

@@ -1,0 +1,12 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    // Minecraft 依赖（1.16.5）- 显式声明以确保 common 模块可以访问 Minecraft 类
+    minecraft "net.minecraft:minecraft:${rootProject.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    
+    // 仅依赖 Fabric Loader 用于 @Environment 注解（会被重映射）
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+}

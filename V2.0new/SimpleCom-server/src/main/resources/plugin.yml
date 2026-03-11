@@ -1,0 +1,8 @@
+name: SimpleCom-server
+version: '1.0'
+main: com.xiaofan.simpleComServer.SimpleComServer
+api-version: '1.16'
+load: STARTUP
+folia-supported: true
+authors: [xiaofan]
+description: 简单的通讯器服务端（兼容 1.16.5–1.21.11，支持 Bukkit/Paper/Folia）

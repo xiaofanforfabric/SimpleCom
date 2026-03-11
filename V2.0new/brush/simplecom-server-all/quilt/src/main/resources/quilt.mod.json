@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "${group}",
+    "id": "simplecom-server-all",
+    "version": "${version}",
+    "metadata": {
+      "name": "SimpleCom-server-all",
+      "description": "简单的通讯器模组服务端 | SimpleCom mod server side.",
+      "contributors": {
+        "xiaofan": "Author"
+      },
+      "icon": "assets/simplecom-server-all/icon.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "com.xiaofan.simplecom.server.quilt.ExampleModQuilt"
+      ]
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": "*"
+      },
+      {
+        "id": "architectury",
+        "version": "*"
+      }
+    ]
+  },
+  "mixin": [
+    "simplecom-server-all.mixins.json"
+  ]
+}

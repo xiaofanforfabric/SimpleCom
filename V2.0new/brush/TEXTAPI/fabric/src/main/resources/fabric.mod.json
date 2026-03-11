@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "textapi",
+  "version": "${version}",
+  "name": "TEXTAPI",
+  "description": "跨版本玩家事件和聊天消息抽象 API - 1.16.5 版本",
+  "authors": ["xiaofan"],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "MIT",
+  "icon": "assets/textapi/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.xiaofan.textapi.fabric.TextapiFabric"
+    ],
+    "client": [
+      "com.xiaofan.textapi.fabric.client.TextapiFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.16.5",
+    "fabric-api": "*"
+  },
+  "suggests": {}
+}

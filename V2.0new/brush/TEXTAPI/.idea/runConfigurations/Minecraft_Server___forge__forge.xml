@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" factoryName="Application" name="Minecraft Server (:forge)" type="Application">
+    <option name="MAIN_CLASS_NAME" value="dev.architectury.transformer.TransformerRuntime"/>
+    <module name="textapi.forge.main"/>
+    <option name="PROGRAM_PARAMETERS" value="nogui"/>
+    <option name="VM_PARAMETERS" value="-Dfabric.dli.config=I:\SimpleCom\V2.0new\TEXTAPI\forge\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=server -XX:+IgnoreUnrecognizedVMOptions --add-exports=java.base/sun.security.util=ALL-UNNAMED --add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming --add-opens=java.base/java.util.jar=ALL-UNNAMED -Dfabric.dli.main=net.minecraftforge.userdev.LaunchTesting -Darchitectury.main.class=I:\SimpleCom\V2.0new\TEXTAPI\forge\.gradle\architectury\.main_class -Darchitectury.runtime.transformer=I:\SimpleCom\V2.0new\TEXTAPI\forge\.gradle\architectury\.transforms -Darchitectury.properties=I:\SimpleCom\V2.0new\TEXTAPI\forge\.gradle\architectury\.properties -Djdk.attach.allowAttachSelf=true -javaagent:I:\SimpleCom\V2.0new\TEXTAPI\.gradle\architectury\architectury-transformer-agent.jar"/>
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/forge/run/"/>
+    <method v="2">
+      <option enabled="true" name="Make"/>
+    </method>
+    <envs>
+      <env name="MOD_CLASSES" value="main%%I:\SimpleCom\V2.0new\TEXTAPI\forge\build\resources\main;main%%I:\SimpleCom\V2.0new\TEXTAPI\forge\build\classes\java\main"/><env name="MCP_MAPPINGS" value="loom.stub"/><env name="MCP_VERSION" value="20210115.111550"/><env name="FORGE_VERSION" value="36.2.42"/><env name="FORGE_GROUP" value="net.minecraftforge"/><env name="target" value="fmluserdevserver"/><env name="MC_VERSION" value="1.16.5"/>
+    </envs>
+    <shortenClasspath name="ARGS_FILE"/>
+  <classpathModifications/></configuration>
+</component>

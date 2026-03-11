@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "textapi-fabric-1_16_5",
+  "version": "${version}",
+
+  "name": "TEXTAPI-fabric-1.16.5",
+  "description": "抽象API",
+  "authors": [],
+  "contact": {},
+
+  "license": "MIT",
+  "icon": "assets/textapi-fabric-1_16_5/icon.png",
+
+  "environment": "server",
+  "entrypoints": {
+    "main": ["com.xiaofan.textapiFabric1_16_5.TextapiFabric1_16_5"]
+  },
+
+
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}

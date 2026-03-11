@@ -1,0 +1,180 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'com.gradleup.shadow' version '8.3.6'
+}
+
+group = mod_group_id
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    mavenCentral()
+}
+
+def javafxVersion = '17.0.6'
+
+// ─── 独立打包配置：只有这里面的依赖才会被 shadowJar 打包 ───────────────
+// 与 runtimeClasspath 完全隔离，避免将 Minecraft/Forge/LWJGL 打包进去
+configurations {
+    shade {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+    // implementation 继承 shade，编译器可见 shade 里的所有类
+    implementation.extendsFrom(shade)
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // ── 打包进 FAT JAR 的依赖（同时加入 shade 和 implementation）──────
+    // shade 供 shadowJar 扫描；implementation 让编译器能看到这些类
+
+    shade(project(':SimpleCom-core')) { transitive = true }
+    shade('org.java-websocket:Java-WebSocket:1.5.7')
+    shade('javazoom:jlayer:1.0.1')
+    shade('io.github.jaredmdobson:concentus:1.0.2')
+
+    // JavaFX 17：只打 Windows 原生库（当前平台够用，避免臃肿）
+    // 若需跨平台，取消注释 linux/mac 行
+    ['javafx-base', 'javafx-controls', 'javafx-graphics'].each { mod ->
+        shade("org.openjfx:${mod}:${javafxVersion}")
+        shade("org.openjfx:${mod}:${javafxVersion}:win")
+        // shade("org.openjfx:${mod}:${javafxVersion}:linux")
+        // shade("org.openjfx:${mod}:${javafxVersion}:mac")
+    }
+
+    // ── 由 Forge/Minecraft 运行时提供，不打包 ──────────────────────────
+    compileOnly('net.java.dev.jna:jna:5.14.0')
+    shade('org.slf4j:slf4j-api:2.0.9')
+    shade('org.slf4j:slf4j-nop:2.0.9')
+}
+
+// ─── Shadow FAT JAR ──────────────────────────────────────────────────
+// 仅从 shade 配置（而不是 runtimeClasspath）打包，避免包含 Minecraft/LWJGL
+shadowJar {
+    archiveClassifier.set('all')
+
+    // 只扫描 shade 配置，不扫描 runtimeClasspath
+    configurations = [project.configurations.shade]
+
+    manifest {
+        attributes([
+                "Specification-Title"     : mod_id,
+                "Specification-Vendor"    : mod_authors,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : mod_version,
+                "Implementation-Vendor"   : mod_authors,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Automatic-Module-Name"   : "simplecom.client.forge"
+        ])
+    }
+
+    // 移除 module-info.class → FAT JAR 成为自动模块，可读取 Forge 提供的 JNA/SLF4J
+    exclude 'module-info.class'
+    exclude 'META-INF/versions/*/module-info.class'
+
+    // 排除 JNA（Forge 已有 com.sun.jna 命名模块）
+    exclude 'com/sun/jna/**'
+
+    // 重命名 SLF4J 包，避免与高版本 MC 的 SLF4J 冲突
+    // Relocate SLF4J to avoid conflicts with newer MC versions
+    relocate 'org.slf4j', 'com.xiaofan.simplecom.shadow.slf4j'
+
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// ─── 标准 jar（ForgeGradle reobfJar 需要此任务存在）────────────────
+tasks.named('jar', Jar).configure {
+    archiveClassifier.set('slim')
+    manifest {
+        attributes([
+                "Specification-Title"     : mod_id,
+                "Specification-Vendor"    : mod_authors,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : mod_authors,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.named('assemble') {
+    dependsOn 'shadowJar'
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

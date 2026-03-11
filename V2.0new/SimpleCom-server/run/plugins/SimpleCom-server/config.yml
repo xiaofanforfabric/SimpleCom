@@ -1,0 +1,11 @@
+# SimpleCom 端口复用代理配置 | Port Multiplex Proxy Config
+# 代理在 listen-port 上同时接受 WebSocket（语音）与 Minecraft 连接，按协议转发
+# Proxy accepts WebSocket (voice) and Minecraft on listen-port, forwards by protocol
+
+proxy:
+  # 代理监听端口（语音+MC 共用入口）| Proxy listen port (voice + MC shared entry)
+  listen-port: 25566
+  # Minecraft 后端地址 | MC backend host
+  mc-backend-host: 127.0.0.1
+  # Minecraft 后端端口（游戏端口）| MC backend port (game port)
+  mc-backend-port: 25565

@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    // 使用 Gradle 9 兼容的维护分支 | Gradle 9 compatible fork of Shadow
+    id 'com.gradleup.shadow' version '8.3.6'
+}
+
+group = 'com.xiaofan'
+version = 'V2.0'
+
+java {
+    // Java 11 是 OpenJFX 17 的最低要求；源码兼容 Java 11+
+    // Java 11 is the minimum for OpenJFX 17; source is compatible with Java 11+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+def javafxVersion = '17.0.6'
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // WebSocket 客户端 | WebSocket client (Java 8+ compatible)
+    implementation 'org.java-websocket:Java-WebSocket:1.5.7'
+    // Java-WebSocket 初始化时需要 SLF4J，否则 NoClassDefFoundError: LoggerFactory
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.slf4j:slf4j-nop:2.0.9'
+
+    // MP3 播放（JLayer 直接解码，不依赖 SPI，Fabric 下更可靠）
+    implementation 'javazoom:jlayer:1.0.1'
+
+    // 全局热键（JNA 轮询 GetAsyncKeyState，不依赖 Fabric/Mixin，Windows 下 MC 获得焦点时也能触发）
+    implementation 'net.java.dev.jna:jna:5.14.0'
+
+    // Opus 音频编解码器（纯 Java 实现，用于压缩语音数据）
+    // Concentus from Maven Central
+    implementation 'io.github.jaredmdobson:concentus:1.0.2'
+
+    // JavaFX 17（含全平台 native 资源，用于 fat-jar 独立部署；不含 javafx-media，用 javax.sound 播 MP3）
+    ['javafx-base', 'javafx-controls', 'javafx-graphics'].each { mod ->
+        implementation "org.openjfx:${mod}:${javafxVersion}"
+        // 包含全平台 native 资源：Windows / Linux / macOS (x86_64 + aarch64)
+        implementation "org.openjfx:${mod}:${javafxVersion}:win"
+        implementation "org.openjfx:${mod}:${javafxVersion}:linux"
+        implementation "org.openjfx:${mod}:${javafxVersion}:mac"
+        implementation "org.openjfx:${mod}:${javafxVersion}:mac-aarch64"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+}
+
+// 独立运行 jar（含所有依赖），入口为 Launcher（不直接继承 Application，规避 Java 11+ 模块检测问题）
+// Self-contained fat jar. Main-Class is Launcher (not Application subclass) to avoid Java 11+ module detection issue.
+tasks.shadowJar {
+    archiveBaseName.set('SimpleCom')
+    archiveClassifier.set('standalone')
+    archiveVersion.set(project.version)
+    manifest {
+        attributes('Main-Class': 'com.xiaofan.gui.Launcher')
+    }
+    mergeServiceFiles()
+    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+}
+
+// 不把 shadowJar 挂到 build 上，避免作为 Fabric Loom 子模块时触发兼容性问题
+// Don't hook shadowJar into build to avoid Fabric Loom compatibility issues
+// 独立打包时手动执行: ./gradlew :SimpleCom-core:shadowJar
+// Build standalone jar manually: ./gradlew :SimpleCom-core:shadowJar
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'simplecom-core'
+            groupId = project.group
+            version = project.version
+        }
+    }
+}

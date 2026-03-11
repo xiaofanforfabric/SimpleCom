@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.client.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.test.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-Client-fabric.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.client.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.test.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-server-fabric.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SimpleCom-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SimpleCom-server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/V2.0new.iml" filepath="$PROJECT_DIR$/.idea/V2.0new.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/simplecom-client-forge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/simplecom-client-forge.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/simplecom-client-forge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/simplecom-client-forge.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1568967776/simplecom-server-all-1_20_1.SimpleCom-server-core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1568967776/simplecom-server-all-1_20_1.SimpleCom-server-core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1568967776/simplecom-server-all-1_20_1.SimpleCom-server-core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/1568967776/simplecom-server-all-1_20_1.SimpleCom-server-core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/common/simplecom-server-all-1_20_1.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fabric/simplecom-server-all-1_20_1.fabric.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fabric/simplecom-server-all-1_20_1.fabric.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fabric/simplecom-server-all-1_20_1.fabric.test.iml" filepath="$PROJECT_DIR$/.idea/modules/fabric/simplecom-server-all-1_20_1.fabric.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/forge/simplecom-server-all-1_20_1.forge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/forge/simplecom-server-all-1_20_1.forge.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/forge/simplecom-server-all-1_20_1.forge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/forge/simplecom-server-all-1_20_1.forge.test.iml" />
+    </modules>
+  </component>
+</project>

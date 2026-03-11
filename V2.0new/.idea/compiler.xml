@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="com.xiaofan.SimpleCom-Client-fabric.client" target="17" />
+      <module name="com.xiaofan.SimpleCom-Client-fabric.main" target="17" />
+      <module name="com.xiaofan.SimpleCom-Client-fabric.test" target="17" />
+      <module name="example" target="17" />
+      <module name="example.common" target="1.8" />
+      <module name="example.common.main" target="1.8" />
+      <module name="example.common.test" target="1.8" />
+      <module name="example.main" target="17" />
+      <module name="example.platforms" target="1.8" />
+      <module name="example.platforms.bukkit" target="1.8" />
+      <module name="example.platforms.bukkit.main" target="1.8" />
+      <module name="example.platforms.bukkit.test" target="1.8" />
+      <module name="example.platforms.bungee" target="1.8" />
+      <module name="example.platforms.bungee.main" target="1.8" />
+      <module name="example.platforms.bungee.test" target="1.8" />
+      <module name="example.platforms.fabric" target="1.8" />
+      <module name="example.platforms.fabric.main" target="1.8" />
+      <module name="example.platforms.fabric.test" target="1.8" />
+      <module name="example.platforms.forge" target="1.8" />
+      <module name="example.platforms.forge.main" target="1.8" />
+      <module name="example.platforms.forge.test" target="1.8" />
+      <module name="example.platforms.main" target="1.8" />
+      <module name="example.platforms.neoforge" target="17" />
+      <module name="example.platforms.neoforge.main" target="17" />
+      <module name="example.platforms.neoforge.test" target="17" />
+      <module name="example.platforms.sponge7" target="1.8" />
+      <module name="example.platforms.sponge7.main" target="1.8" />
+      <module name="example.platforms.sponge7.test" target="1.8" />
+      <module name="example.platforms.sponge8" target="1.8" />
+      <module name="example.platforms.sponge8.main" target="1.8" />
+      <module name="example.platforms.sponge8.test" target="1.8" />
+      <module name="example.platforms.test" target="1.8" />
+      <module name="example.platforms.velocity" target="1.8" />
+      <module name="example.platforms.velocity.main" target="1.8" />
+      <module name="example.platforms.velocity.test" target="1.8" />
+      <module name="example.test" target="17" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all" target="21" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.common" target="1.8" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.common.main" target="1.8" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.common.main~1" target="1.8" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.common.test" target="1.8" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.common.test~1" target="1.8" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.main" target="21" />
+      <module name="ExampleTaterLibPlugin.simplecom-server-all.test" target="21" />
+      <module name="SimpleCom-Client" target="21" />
+      <module name="SimpleCom-Client.client" target="17" />
+      <module name="SimpleCom-Client.main" target="17" />
+      <module name="SimpleCom-Client.SimpleCom-core" target="11" />
+      <module name="SimpleCom-Client.SimpleCom-core.main" target="11" />
+      <module name="SimpleCom-Client.SimpleCom-core.test" target="11" />
+      <module name="SimpleCom-Client.test" target="17" />
+      <module name="simplecom-server-all.common" target="17" />
+      <module name="simplecom-server-all.common.main" target="17" />
+      <module name="simplecom-server-all.common.test" target="17" />
+      <module name="simplecom-server-all.fabric" target="17" />
+      <module name="simplecom-server-all.fabric.main" target="17" />
+      <module name="simplecom-server-all.fabric.test" target="17" />
+      <module name="simplecom-server-all.forge" target="17" />
+      <module name="simplecom-server-all.forge.main" target="17" />
+      <module name="simplecom-server-all.forge.test" target="17" />
+      <module name="simplecom-server-all.neoforge" target="17" />
+      <module name="simplecom-server-all.neoforge.main" target="17" />
+      <module name="simplecom-server-all.neoforge.test" target="17" />
+      <module name="simplecom-server-all.platforms" target="1.8" />
+      <module name="simplecom-server-all.platforms.bukkit" target="1.8" />
+      <module name="simplecom-server-all.platforms.bukkit.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.bukkit.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.bungee" target="1.8" />
+      <module name="simplecom-server-all.platforms.bungee.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.bungee.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.fabric" target="1.8" />
+      <module name="simplecom-server-all.platforms.fabric.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.fabric.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.forge" target="1.8" />
+      <module name="simplecom-server-all.platforms.forge.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.forge.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.neoforge" target="17" />
+      <module name="simplecom-server-all.platforms.neoforge.main" target="17" />
+      <module name="simplecom-server-all.platforms.neoforge.test" target="17" />
+      <module name="simplecom-server-all.platforms.sponge7" target="1.8" />
+      <module name="simplecom-server-all.platforms.sponge7.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.sponge7.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.sponge8" target="1.8" />
+      <module name="simplecom-server-all.platforms.sponge8.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.sponge8.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.test" target="1.8" />
+      <module name="simplecom-server-all.platforms.velocity" target="1.8" />
+      <module name="simplecom-server-all.platforms.velocity.main" target="1.8" />
+      <module name="simplecom-server-all.platforms.velocity.test" target="1.8" />
+      <module name="simplecom-server-all.quilt" target="17" />
+      <module name="simplecom-server-all.quilt.main" target="17" />
+      <module name="simplecom-server-all.quilt.test" target="17" />
+      <module name="simplecom-server-all.SimpleCom-server-core" target="1.8" />
+      <module name="simplecom-server-all.SimpleCom-server-core.main" target="1.8" />
+      <module name="simplecom-server-all.SimpleCom-server-core.test" target="1.8" />
+      <module name="TEXTAPI" target="1.8" />
+      <module name="TEXTAPI-fabric-1.16.5" target="21" />
+      <module name="TEXTAPI-fabric-1.16.5.main" target="1.8" />
+      <module name="TEXTAPI-fabric-1.16.5.test" target="1.8" />
+      <module name="textapi.common" target="17" />
+      <module name="textapi.common.main" target="1.8" />
+      <module name="textapi.common.test" target="1.8" />
+      <module name="textapi.fabric" target="17" />
+      <module name="textapi.fabric.main" target="1.8" />
+      <module name="textapi.fabric.test" target="1.8" />
+      <module name="textapi.forge" target="17" />
+      <module name="textapi.forge.main" target="1.8" />
+      <module name="textapi.forge.test" target="1.8" />
+      <module name="TEXTAPI.main" target="1.8" />
+      <module name="TEXTAPI.SimpleCom-server-core" target="1.8" />
+      <module name="textapi.SimpleCom-server-core" target="1.8" />
+      <module name="textapi.SimpleCom-server-core.main" target="1.8" />
+      <module name="TEXTAPI.SimpleCom-server-core.main" target="1.8" />
+      <module name="textapi.SimpleCom-server-core.test" target="1.8" />
+      <module name="TEXTAPI.SimpleCom-server-core.test" target="1.8" />
+      <module name="TEXTAPI.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="example.platforms.fabric" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\main\fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="example.platforms.fabric.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\main\fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="example.platforms.fabric.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\test\test-fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="simplecom-server-all.common" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\classes\java\main\simplecom-server-all-common-common-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings-srg.tiny" />
+      <module name="simplecom-server-all.common.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\classes\java\main\simplecom-server-all-common-common-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings-srg.tiny" />
+      <module name="simplecom-server-all.common.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\classes\java\test\test-simplecom-server-all-common-common-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\common\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings-srg.tiny" />
+      <module name="simplecom-server-all.fabric" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\classes\java\main\simplecom-server-all-fabric-fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings.tiny" />
+      <module name="simplecom-server-all.fabric.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\classes\java\main\simplecom-server-all-fabric-fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings.tiny" />
+      <module name="simplecom-server-all.fabric.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\classes\java\test\test-simplecom-server-all-fabric-fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2\mappings.tiny" />
+      <module name="simplecom-server-all.forge" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\classes\java\main\simplecom-server-all-forge-forge-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2\mappings-mixin-srg.tiny" />
+      <module name="simplecom-server-all.forge.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\classes\java\main\simplecom-server-all-forge-forge-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2\mappings-mixin-srg.tiny" />
+      <module name="simplecom-server-all.forge.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\classes\java\test\test-simplecom-server-all-forge-forge-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\forge\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-forge-1.20.4-49.2.2\mappings-mixin-srg.tiny" />
+      <module name="simplecom-server-all.platforms.fabric" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\main\fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="simplecom-server-all.platforms.fabric.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\main\fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="simplecom-server-all.platforms.fabric.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\classes\java\test\test-fabric-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\ExampleTaterLibPlugin\platforms\fabric\build\loom-cache\mixin-map-net.fabricmc.yarn.1_15.1.15+build.2-v2.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.15\net.fabricmc.yarn.1_15.1.15+build.2-v2\mappings.tiny" />
+      <module name="simplecom-server-all.quilt" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\classes\java\main\simplecom-server-all-quilt-quilt-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt\mappings.tiny" />
+      <module name="simplecom-server-all.quilt.main" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\classes\java\main\simplecom-server-all-quilt-quilt-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt.main.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt\mappings.tiny" />
+      <module name="simplecom-server-all.quilt.test" options="-AoutRefMapFile=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\classes\java\test\test-simplecom-server-all-quilt-quilt-refmap.json -AdefaultObfuscationEnv=named:intermediary -Aquiet=true -AoutMapFileNamedIntermediary=I:\SimpleCom\V2.0new\simplecom-server-all\quilt\build\loom-cache\mixin-map-net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt.test.tiny -AinMapFileNamedIntermediary=G:\Android\Gradle\caches\fabric-loom\1.20.4\net.fabricmc.yarn.1_20_4.1.20.4+build.1-v2-arch-quilt\mappings.tiny" />
+    </option>
+  </component>
+</project>

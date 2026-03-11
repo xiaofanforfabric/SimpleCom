@@ -94,19 +94,49 @@ Traditional voice mods typically use **UDP** for real-time audio streaming. Howe
 
 **Each release version is incompatible with other versions.** Client and server must use the same version.
 
+- **V2.0** server (plugin/mod) only works with **V2.0** client. This version adds the **Voice Stream API (WSAPI)** and introduces a shared server core for modern platforms.
 - **V1.1** server (mod or Bukkit plugin) only works with **V1.1** client.
 - **V0.1** server only worked with **V1.0** client.
 
-Do not mix versions (e.g. V1.1 client on a V0.1 server will not work).
+Do not mix versions (e.g. V2.0 client on a V1.1 server will not work).
 
 ### 中文
 
 **每个版本与其它版本不兼容。** 客户端与服务端必须使用相同版本。
 
+- **V2.0** 服务端（插件/模组）仅兼容 **V2.0** 客户端。本版本新增 **语音流 API（WSAPI）**，并为新平台引入统一的服务端核心库。
 - **V1.1** 服务端（模组或 Bukkit 插件）仅兼容 **V1.1** 客户端。
 - **V0.1** 服务端仅兼容 **V1.0** 客户端。
 
-请勿混用版本（例如 V1.1 客户端连接 V0.1 服务端将无法正常工作）。
+请勿混用版本（例如 V2.0 客户端连接 V1.1 服务端将无法正常工作）。
+
+---
+
+## What's New in V2.0 / V2.0 更新内容
+
+### English
+
+- **New shared server core (`SimpleCom-server-core`)**  
+  A pure-Java core library that implements the port-multiplex proxy and WebSocket server used by Bukkit, Fabric and other server platforms, reducing duplicated logic and making maintenance easier.
+
+- **Voice Stream API (WSAPI)**  
+  A new, token-protected WebSocket endpoint that lets external services (e.g. KOOK/Discord bridges, bots, recording tools) subscribe to real-time voice packets from **non-encrypted channels**.  
+  See `V2.0new/WSAPI.md` for the full protocol documentation.
+
+- **Unified version string `V2.0`**  
+  All main modules in the `V2.0new` branch (client, server, core) now use the same version string **`V2.0`**, simplifying deployment, bug reports and modpack integration.
+
+### 中文
+
+- **统一的服务端核心库（`SimpleCom-server-core`）**  
+  将端口复用代理与 WebSocket 服务器实现抽取为独立的纯 Java 核心库，由 Bukkit 插件、Fabric 模组等多种平台共用，减少重复代码、方便后续维护与扩展。
+
+- **语音流 API（WSAPI）**  
+  新增带 Token 鉴权的 WebSocket 接口，允许外部服务（例如 KOOK / Discord 语音桥接、机器人、录音工具）实时订阅来自 **非加密信道** 的语音数据包。  
+  详细协议说明见 `V2.0new/WSAPI.md`。
+
+- **版本号统一为 `V2.0`**  
+  `V2.0new` 分支下的主要模块（客户端、服务端、核心库）统一使用 **V2.0** 版本号，便于部署、多端排错以及整合进整合包。
 
 ---
 
@@ -144,7 +174,9 @@ SimpleCom/
 
 ### English
 
-**Recommended**: `cd` into the client mod directory and use the standard `build` task:
+#### V1.x client mod (payload channel)
+
+**Recommended**: `cd` into the old client mod directory and use the standard `build` task:
 
 ```bash
 cd 1.16.5forge-fabric
@@ -155,9 +187,27 @@ cd 1.16.5forge-fabric
 
 > Note: The root task `build1.16.5client` may have issues; prefer building from within the project directory.
 
+#### V2.0 FX WebSocket client
+
+For **V2.0**, the recommended client is the standalone **JavaFX GUI** app that connects over WebSocket to the server’s proxy listen-port:
+
+```bash
+cd V2.0new
+./gradlew :SimpleCom-core:shadowJar
+# Output: SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
+```
+
+Then run it with Java 11+:
+
+```bash
+java -jar SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
+```
+
 ### 中文
 
-**推荐**：进入客户端模组目录后使用标准 `build` 任务：
+#### V1.x 客户端模组（payload 通道）
+
+**推荐**：进入旧版客户端模组目录后使用标准 `build` 任务：
 
 ```bash
 cd 1.16.5forge-fabric
@@ -168,19 +218,61 @@ cd 1.16.5forge-fabric
 
 > 说明：根目录的 `build1.16.5client` 任务可能存在问题，建议在项目目录内构建。
 
+#### V2.0 FX WebSocket 客户端
+
+在 **V2.0** 中，推荐使用独立的 **JavaFX 图形客户端**，通过 WebSocket 连接到服务端的代理监听端口：
+
+```bash
+cd V2.0new
+./gradlew :SimpleCom-core:shadowJar
+# 输出：SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
+```
+
+然后使用 Java 11+ 运行：
+
+```bash
+java -jar SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
+```
+
 ---
 
 ## Installation / 安装
 
 ### English
 
+#### V1.x (payload-based in-game client)
+
 1. **Client**: Place `simplecom-1.1.jar` in `.minecraft/mods/` (requires Architectury)
 2. **Server**: Install the Bukkit/Spigot plugin on your server
 
+#### V2.0 (WebSocket + FX GUI + proxy)
+
+1. **Server**:
+   - Install the **V2.0 SimpleCom server plugin/mod**.
+   - Configure `SimpleComConfig/config.yml` so that the **port-multiplex proxy** and internal WebSocket server are running (players and the FX client connect to the proxy listen-port).
+2. **Client**:
+   - Build or download `SimpleCom-standalone-V2.0.jar` from `V2.0new/SimpleCom-core`.
+   - Run it with Java 11+: `java -jar SimpleCom-standalone-V2.0.jar`.
+   - In Minecraft, join the server and get the 6-digit verification code from chat.
+   - In the FX GUI, enter your username, server address (e.g. `example.com:25566`), and the verification code, then click **Connect**.
+
 ### 中文
+
+#### V1.x（游戏内 payload 客户端）
 
 1. **客户端**：将 `simplecom-1.1.jar` 放入 `.minecraft/mods/`（需安装 Architectury）
 2. **服务端**：在服务器上安装 Bukkit/Spigot 插件
+
+#### V2.0（WebSocket + FX 图形界面 + 代理端口复用）
+
+1. **服务端**：
+   - 安装 **V2.0 SimpleCom 服务端插件/模组**。
+   - 在 `SimpleComConfig/config.yml` 中启用 **端口复用代理** 与内部 WebSocket 服务器（玩家和 FX 客户端都连到这个代理监听端口）。
+2. **客户端**：
+   - 从 `V2.0new/SimpleCom-core` 构建或下载 `SimpleCom-standalone-V2.0.jar`。
+   - 使用 Java 11+ 运行：`java -jar SimpleCom-standalone-V2.0.jar`。
+   - 在 Minecraft 中进入服务器，从聊天栏获得 6 位验证码。
+   - 在 FX 图形界面中输入用户名、服务器地址（如 `example.com:25566`）、验证码，然后点击“连接/Connect”。
 
 ---
 

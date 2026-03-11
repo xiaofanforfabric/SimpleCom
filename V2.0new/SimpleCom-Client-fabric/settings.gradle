@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'SimpleCom-Client-fabric'
+include 'SimpleCom-core'
+project(':SimpleCom-core').projectDir = file('../SimpleCom-core')

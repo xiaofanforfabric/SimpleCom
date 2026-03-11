@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "simplecom_server_all_1_20_1"
+version = "${version}"
+displayName = "simpleCom-server-all-1.20.1"
+authors = "xiaofan"
+description = '''
+简单的通讯器服务端
+'''
+#logoFile = ""
+
+[[dependencies.simplecom_server_all_1_20_1]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.simplecom_server_all_1_20_1]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.simplecom_server_all_1_20_1]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.2.14,)"
+ordering = "AFTER"
+side = "BOTH"

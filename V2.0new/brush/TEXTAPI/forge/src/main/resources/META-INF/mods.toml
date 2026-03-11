@@ -1,0 +1,27 @@
+modLoader = "javafml"
+loaderVersion = "[36,)"
+license = "MIT"
+
+[[mods]]
+modId = "textapi"
+version = "${version}"
+displayName = "TEXTAPI"
+authors = "xiaofan"
+description = '''
+跨版本玩家事件和聊天消息抽象 API - 1.16.5 版本
+直接使用 Minecraft 1.16.5 API，不依赖任何第三方库
+'''
+
+[[dependencies.textapi]]
+modId = "forge"
+mandatory = true
+versionRange = "[36,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.textapi]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.5,)"
+ordering = "NONE"
+side = "BOTH"
