@@ -189,7 +189,9 @@ cd 1.16.5forge-fabric
 
 #### V2.0 FX WebSocket client
 
-For **V2.0**, the recommended client is the standalone **JavaFX GUI** app that connects over WebSocket to the server’s proxy listen-port:
+For **V2.0**, players should **download and use the released client package**.
+
+If you are a developer (or you want to build from source), the V2.0 client can also be built as a standalone **JavaFX GUI** app that connects over WebSocket to the server’s proxy listen-port:
 
 ```bash
 cd V2.0new
@@ -220,7 +222,9 @@ cd 1.16.5forge-fabric
 
 #### V2.0 FX WebSocket 客户端
 
-在 **V2.0** 中，推荐使用独立的 **JavaFX 图形客户端**，通过 WebSocket 连接到服务端的代理监听端口：
+在 **V2.0** 中，玩家请直接**下载并使用发布的客户端包**。
+
+如果你是开发者（或希望自行编译），也可以把 V2.0 客户端构建为独立的 **JavaFX 图形客户端**，通过 WebSocket 连接到服务端的代理监听端口：
 
 ```bash
 cd V2.0new
@@ -251,10 +255,9 @@ java -jar SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
    - Install the **V2.0 SimpleCom server plugin/mod**.
    - Configure `SimpleComConfig/config.yml` so that the **port-multiplex proxy** and internal WebSocket server are running (players and the FX client connect to the proxy listen-port).
 2. **Client**:
-   - Build or download `SimpleCom-standalone-V2.0.jar` from `V2.0new/SimpleCom-core`.
-   - Run it with Java 11+: `java -jar SimpleCom-standalone-V2.0.jar`.
+   - Install/run the **released V2.0 client package** (players do not need to build from source).
    - In Minecraft, join the server and get the 6-digit verification code from chat.
-   - In the FX GUI, enter your username, server address (e.g. `example.com:25566`), and the verification code, then click **Connect**.
+   - In the client UI (FX GUI), enter your username, server address (e.g. `example.com:25566`), and the verification code, then click **Connect**.
 
 ### 中文
 
@@ -269,10 +272,9 @@ java -jar SimpleCom-core/build/libs/SimpleCom-standalone-V2.0.jar
    - 安装 **V2.0 SimpleCom 服务端插件/模组**。
    - 在 `SimpleComConfig/config.yml` 中启用 **端口复用代理** 与内部 WebSocket 服务器（玩家和 FX 客户端都连到这个代理监听端口）。
 2. **客户端**：
-   - 从 `V2.0new/SimpleCom-core` 构建或下载 `SimpleCom-standalone-V2.0.jar`。
-   - 使用 Java 11+ 运行：`java -jar SimpleCom-standalone-V2.0.jar`。
+   - 直接安装/运行 **V2.0 客户端发布包**（玩家无需自己构建）。
    - 在 Minecraft 中进入服务器，从聊天栏获得 6 位验证码。
-   - 在 FX 图形界面中输入用户名、服务器地址（如 `example.com:25566`）、验证码，然后点击“连接/Connect”。
+   - 在客户端界面（FX GUI）中输入用户名、服务器地址（如 `example.com:25566`）、验证码，然后点击“连接/Connect”。
 
 ---
 

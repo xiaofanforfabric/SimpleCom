@@ -30,11 +30,10 @@
 
 #### V2.0 (WebSocket + FX GUI + proxy)
 
-1. **Server (required)**: install the **V2.0 SimpleCom server plugin/mod** and configure `SimpleComConfig/config.yml` so that the port-multiplex proxy and internal WebSocket server are running (players and the FX client connect to the **proxy listen-port**).
-2. **Client app**: build or download the standalone FX client JAR from the `V2.0new/SimpleCom-core` module (task `:SimpleCom-core:shadowJar` produces `SimpleCom-standalone-V2.0.jar`) and run it with Java 11+:
-   - `java -jar SimpleCom-standalone-V2.0.jar`
-3. **In game**: join the Minecraft server; when the server plugin is active, you will receive a **6-digit verification code** in chat.
-4. **In the FX GUI**:
+1. **Server (required)**: install the **V2.0 SimpleCom server plugin/mod** and configure `SimpleComConfig/config.yml` so that the port-multiplex proxy and internal WebSocket server are running (players and the client connect to the **proxy listen-port**).
+2. **Client mod/app**: install/run the **V2.0 client package you downloaded** (no manual building needed for players).
+3. **In game**: join the Minecraft server; when the server is active, you will receive a **6-digit verification code** in chat.
+4. **In the client UI (FX GUI)**:
    - Choose language (`Language / 语言`).
    - Enter your **Minecraft username**.
    - Enter the **server address** of the voice proxy, e.g. `example.com:25566` or `127.0.0.1:25566` (the proxy listen-port or direct WS port).
@@ -54,11 +53,10 @@
 
 #### V2.0（WebSocket + FX 图形界面 + 服务端端口复用）
 
-1. **服务端（必需）**：安装 **V2.0 SimpleCom 服务端插件/模组**，并在 `SimpleComConfig/config.yml` 中启用端口复用代理与内部 WebSocket 服务器（玩家和 FX 客户端都连接到同一个 **代理监听端口**）。
-2. **客户端程序**：从 `V2.0new/SimpleCom-core` 模块构建或下载独立 FX 客户端 JAR（执行 `:SimpleCom-core:shadowJar` 得到 `SimpleCom-standalone-V2.0.jar`），使用 Java 11+ 运行：
-   - `java -jar SimpleCom-standalone-V2.0.jar`
+1. **服务端（必需）**：安装 **V2.0 SimpleCom 服务端插件/模组**，并在 `SimpleComConfig/config.yml` 中启用端口复用代理与内部 WebSocket 服务器（玩家和客户端都连接到同一个 **代理监听端口**）。
+2. **客户端模组/程序**：直接安装/运行你下载到的 **V2.0 客户端发布包**（玩家无需自己构建）。
 3. **在游戏中**：进入安装了 SimpleCom 服务端插件的服务器，聊天栏会收到一条包含 **6 位验证码** 的提示。
-4. **在 FX 图形界面中**：
+4. **在客户端界面（FX GUI）中**：
    - 选择界面语言（`Language / 语言`）。
    - 输入你的 **Minecraft 用户名**。
    - 输入语音服务器地址，例如 `example.com:25566` 或 `127.0.0.1:25566`（即代理监听端口或直接 WS 端口）。
@@ -162,6 +160,8 @@ Thank you for your support.
 
 ### 中文
 
-**微信 / 支付宝：** 占位，后续会上传收款二维码。
+**微信 / 支付宝：** 
+![wechat](https://cdn.modrinth.com/data/cached_images/12c65b3974e28a3ee96d696df5850f19d12c7f93_0.webp)
+![alipay](https://cdn.modrinth.com/data/cached_images/5e69d7232565968461e4efc5bfbc298e46a6e7d3.jpeg)
 
 感谢支持。
